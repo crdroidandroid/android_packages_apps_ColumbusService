@@ -11,7 +11,7 @@ abstract class Gate(var context: Context, handler: Handler, handlerType: Int) {
     private val listeners = LinkedHashSet<Listener>()
     private var notifyHandler: Handler =
         if (handlerType == 2) {
-            Handler(Looper.getMainLooper())
+            Handler.createAsync(Looper.getMainLooper())
         } else {
             handler
         }
@@ -21,7 +21,7 @@ abstract class Gate(var context: Context, handler: Handler, handlerType: Int) {
     }
 
     private fun maybeActivate() {
-        if (active || !listeners.isNotEmpty()) {
+        if (active || listeners.isEmpty()) {
             return
         }
         active = true
@@ -29,7 +29,7 @@ abstract class Gate(var context: Context, handler: Handler, handlerType: Int) {
     }
 
     private fun maybeDeactivate() {
-        if (!active || !listeners.isEmpty()) {
+        if (!active || listeners.isNotEmpty()) {
             return
         }
         active = false

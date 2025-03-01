@@ -13,7 +13,7 @@ class PowerState(context: Context, handler: Handler) : TransientGate(context, ha
     private val powerReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                intent ?: return
+                if (intent == null) return
                 if (intent.action == Intent.ACTION_SCREEN_ON) {
                     blockForMillis(GATE_DURATION)
                 } else {

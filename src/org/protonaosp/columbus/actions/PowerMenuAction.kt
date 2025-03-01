@@ -26,7 +26,7 @@ class PowerMenuAction(context: Context) : Action(context) {
     val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
     override fun run() {
-        if (!pm.isInteractive()) {
+        if (!pm.isInteractive) {
             pm.wakeUp(
                 SystemClock.uptimeMillis(),
                 PowerManager.WAKE_REASON_GESTURE,

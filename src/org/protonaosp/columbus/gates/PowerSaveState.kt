@@ -16,7 +16,7 @@ class PowerSaveState(context: Context, handler: Handler) : Gate(context, handler
     private val powerReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                intent ?: return
+                if (intent == null) return
                 refreshStatus()
             }
         }
@@ -25,7 +25,7 @@ class PowerSaveState(context: Context, handler: Handler) : Gate(context, handler
         val state = powerManager.getPowerSaveState(PowerManager.ServiceType.OPTIONAL_SENSORS)
         batterySaverEnabled = state?.batterySaverEnabled ?: false
 
-        isDeviceInteractive = powerManager.isInteractive()
+        isDeviceInteractive = powerManager.isInteractive
 
         setBlocking(batterySaverEnabled && !isDeviceInteractive)
     }

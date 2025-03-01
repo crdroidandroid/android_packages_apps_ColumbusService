@@ -39,7 +39,7 @@ class PocketDetection(context: Context, val handler: Handler) : Gate(context, ha
             override fun onSensorChanged(event: SensorEvent?) {
                 if (proximitySensor == null || proximityMax == null) return
 
-                val value = event?.values?.get(0)
+                val value = event?.values?.getOrNull(0)
                 if (value == null) {
                     setBlocking(false)
                     return
@@ -54,7 +54,7 @@ class PocketDetection(context: Context, val handler: Handler) : Gate(context, ha
         }
 
     fun refreshStatus() {
-        if (!powerManager.isInteractive()) {
+        if (!powerManager.isInteractive) {
             startListeningForPocket()
         } else {
             stopListeningForPocket()
@@ -73,7 +73,7 @@ class PocketDetection(context: Context, val handler: Handler) : Gate(context, ha
     }
 
     fun stopListeningForPocket() {
-        proximitySensor?.let { _ -> sensorManager.unregisterListener(sensorListener) }
+        proximitySensor?.let { sensorManager.unregisterListener(sensorListener) }
         setBlocking(false)
         wasBlocked = false
     }

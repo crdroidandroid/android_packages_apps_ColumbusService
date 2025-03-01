@@ -26,7 +26,7 @@ import android.util.Log
 import org.protonaosp.columbus.TAG
 
 class FlashlightAction(context: Context) : Action(context) {
-    private val handler = Handler(Looper.getMainLooper())
+    private val handler = Handler.createAsync(Looper.getMainLooper())
     private val cm = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val torchCamId = findCamera()
     private var available = true

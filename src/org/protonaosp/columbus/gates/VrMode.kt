@@ -35,25 +35,23 @@ class VrMode(context: Context, handler: Handler) : Gate(context, handler, 2) {
     }
 
     override fun onActivate() {
-        vrManager?.let {
-            try {
+        try {
+            vrManager?.also {
                 inVrMode = it.getVrModeState()
                 it.registerListener(vrStateCallbacks)
-            } catch (e: RemoteException) {
-                Log.e(TAG, "Error registering IVrManager listener: ${e.message}", e)
-                inVrMode = false
             }
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error registering IVrManager listener: ${e.message}", e)
+            inVrMode = false
         }
         updateBlocking()
     }
 
     override fun onDeactivate() {
-        vrManager?.let {
-            try {
-                it.unregisterListener(vrStateCallbacks)
-            } catch (e: RemoteException) {
-                Log.e(TAG, "Error unregistering IVrManager listener: ${e.message}", e)
-            }
+        try {
+            vrManager?.unregisterListener(vrStateCallbacks)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Error unregistering IVrManager listener: ${e.message}", e)
         }
         inVrMode = false
         setBlocking(false)

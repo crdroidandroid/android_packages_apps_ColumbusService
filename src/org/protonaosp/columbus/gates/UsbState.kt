@@ -13,7 +13,8 @@ class UsbState(context: Context, handler: Handler) : TransientGate(context, hand
     private val usbReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                val connected = intent?.getBooleanExtra(UsbManager.USB_CONNECTED, false) ?: return
+                if (intent == null) return
+                val connected = intent.getBooleanExtra(UsbManager.USB_CONNECTED, false)
 
                 if (connected != usbConnected) {
                     usbConnected = connected

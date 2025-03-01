@@ -78,7 +78,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         vibrator = vibratorManager.defaultVibrator
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakelock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG)
-        handler = Handler(Looper.getMainLooper())
+        handler = Handler.createAsync(Looper.getMainLooper())
         prefs = getDePrefs()
 
         dlog(TAG, "Initializing Quick Tap gesture")
@@ -325,7 +325,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     private val screenCallback =
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                intent ?: return
+                if (intent == null) return
                 if (enabled) {
                     when (intent.action) {
                         Intent.ACTION_SCREEN_ON -> {

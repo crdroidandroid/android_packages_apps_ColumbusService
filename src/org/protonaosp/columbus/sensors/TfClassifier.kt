@@ -54,7 +54,7 @@ class TfClassifier(assetManager: AssetManager, assetFileName: String) {
             return ArrayList()
         }
 
-        if (tfliteOut.isNullOrEmpty()) {
+        if (tfliteOut.isEmpty()) {
             dlog(TAG, "Result is invalid")
             return ArrayList()
         }
