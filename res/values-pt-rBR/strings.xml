@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2020 The Proton AOSP Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Toque Rápido</string>
+
+    <!-- Pref keys -->
+    <string name="pref_key_lottie" translatable="false">video</string>
+    <string name="pref_key_enabled" translatable="false">enabled</string>
+    <string name="pref_key_footer" translatable="false">footer</string>
+    <string name="pref_key_sensitivity" translatable="false">sensitivity</string>
+    <string name="pref_key_action" translatable="false">action</string>
+    <string name="pref_key_launch_app" translatable="false">launch_app</string>
+    <string name="pref_key_launch_app_name" translatable="false">launch_app_name</string>
+    <string name="pref_key_launch_app_shortcut" translatable="false">launch_app_shortcut</string>
+    <string name="pref_key_allow_screen_off" translatable="false">allow_screen_off</string>
+    <string name="pref_key_allow_screen_off_action_forced" translatable="false">allow_screen_off_action_forced</string>
+    <string name="pref_key_haptic_intensity" translatable="false">haptic_intensity</string>
+
+    <!-- Other non-translatable -->
+    <string name="summary_placeholder" translatable="false">&#160;</string>
+    <string name="launch_app_default" translatable="false">none</string>
+
+    <!-- Entry points in Settings -->
+    <string name="settings_entry_title">Toque Rápido</string>
+    <string name="settings_entry_summary_on">Ativado / <xliff:g id="action" example="Capturar tela">%1$s</xliff:g></string>
+    <string name="settings_entry_summary_off">Desativado</string>
+    <string name="settings_search_keywords">Toque Rápido, toque traseiro, toque, gesto, assistência, assistente</string>
+
+    <!-- Items in Active Edge gesture settings -->
+    <string name="setting_enabled_title">Usar Toque Rápido</string>
+    <string name="setting_footer_content">Para realizar uma ação, toque duas vezes na parte traseira do seu celular, próximo ao centro</string>
+    <string name="setting_sensitivity_title">Sensibilidade</string>
+    <string name="setting_sensitivity_light">Toque leve</string>
+    <string name="setting_sensitivity_heavy">Toque forte</string>
+    <string name="setting_screen_off_title">Permitir com a tela desligada</string>
+    <string name="setting_screen_off_summary">Pode aumentar os gatilhos falsos</string>
+    <string name="setting_screen_off_blocked_summary">Bloqueado pela ação atual</string>
+    <string name="setting_action_title">Ao tocar duas vezes na traseira</string>
+
+    <!-- App picker -->
+    <string name="app_picker_dialog_title">Selecionar um aplicativo</string>
+    <string name="app_select_title">Selecionar aplicativo</string>
+    <string name="activity_select_title">Selecionar atividade</string>
+    <string name="launch_app_select_title">@string/app_picker_dialog_title</string>
+    <string name="launch_app_select_summary">Selecionar um aplicativo para iniciar com o Toque Rápido</string>
+
+    <!-- Actions -->
+    <string name="action_screenshot_name">Capturar tela</string>
+    <string name="action_assistant_name">Abrir assistente</string>
+    <string name="action_media_name">Reproduzir/pausar mídia</string>
+    <string name="action_notifications_name">Abrir painel de notificações</string>
+    <string name="action_overview_name">Abrir alternador de aplicativos recentes</string>
+    <string name="action_camera_name">Abrir câmera</string>
+    <string name="action_power_menu_name">Abrir menu de energia</string>
+    <string name="action_mute_name">Silenciar chamadas e notificações</string>
+    <string name="action_flashlight_name">Ligar/desligar lanterna</string>
+    <string name="action_screen_name">Ligar/desligar tela</string>
+    <string name="action_launch_name">Iniciar aplicativo</string>
+
+    <string name="action_screenshot_value">screenshot</string>
+    <string name="action_assistant_value">assistant</string>
+    <string name="action_media_value">media</string>
+    <string name="action_notifications_value">notifications</string>
+    <string name="action_overview_value">overview</string>
+    <string name="action_camera_value">camera</string>
+    <string name="action_power_menu_value">power_menu</string>
+    <string name="action_mute_value">mute</string>
+    <string name="action_flashlight_value">flashlight</string>
+    <string name="action_screen_value">screen</string>
+    <string name="action_launch_value">launch</string>
+
+    <!-- Actions meta -->
+    <string-array name="action_values" translatable="false">
+        <item>@string/action_screenshot_value</item>
+        <item>@string/action_assistant_value</item>
+        <item>@string/action_media_value</item>
+        <item>@string/action_notifications_value</item>
+        <item>@string/action_overview_value</item>
+        <item>@string/action_camera_value</item>
+        <item>@string/action_power_menu_value</item>
+        <item>@string/action_mute_value</item>
+        <item>@string/action_flashlight_value</item>
+        <item>@string/action_screen_value</item>
+        <item>@string/action_launch_value</item>
+    </string-array>
+    <string-array name="action_names" translatable="false">
+        <item>@string/action_screenshot_name</item>
+        <item>@string/action_assistant_name</item>
+        <item>@string/action_media_name</item>
+        <item>@string/action_notifications_name</item>
+        <item>@string/action_overview_name</item>
+        <item>@string/action_camera_name</item>
+        <item>@string/action_power_menu_name</item>
+        <item>@string/action_mute_name</item>
+        <item>@string/action_flashlight_name</item>
+        <item>@string/action_screen_name</item>
+        <item>@string/action_launch_name</item>
+    </string-array>
+
+    <!-- Toast -->
+    <string name="gesture_detected">Toque Rápido detectado!</string>
+
+    <!-- Haptic feedback intensity -->
+    <string name="pref_title_haptic_intensity">Intensidade do feedback tátil</string>
+    <string-array name="pref_haptic_intensity_entries">
+        <item>Leve</item>
+        <item>Médio</item>
+        <item>Forte</item>
+    </string-array>
+    <string-array name="pref_haptic_intensity_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>
