@@ -130,8 +130,16 @@ class Lowpass3C : Lowpass1C() {
 }
 
 class Sample3C(x: Float, y: Float, z: Float, var time: Long) {
-    var point: Point3f = Point3f(x, y, z)
+    var point: Point3f
         private set
+
+    init {
+        val p = Point3f(0f, 0f, 0f)
+        p.x = x
+        p.y = y
+        p.z = z
+        point = p
+    }
 }
 
 open class Resample1C {

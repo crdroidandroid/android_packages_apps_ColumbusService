@@ -16,10 +16,14 @@ private const val NANOAPP_ID = 0x476f6f676c001019L
 
 class CHRESensor(val context: Context, var sensitivity: Float, val handler: Handler) :
     ColumbusSensor() {
-    private val contextHubManager =
-        context.getSystemService(Context.CONTEXTHUB_SERVICE) as ContextHubManager
+    private val contextHubManager: ContextHubManager
+    private val callback: CHRECallback
     private var isListening: Boolean = false
-    private val callback: CHRECallback = CHRECallback()
+
+    init {
+        contextHubManager = context.getSystemService(Context.CONTEXTHUB_SERVICE) as ContextHubManager
+        callback = CHRECallback()
+    }
 
     inner class CHRECallback : ContextHubClientCallback() {
         private lateinit var client: ContextHubClient

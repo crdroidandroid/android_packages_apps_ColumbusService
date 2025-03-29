@@ -16,31 +16,37 @@ class ColumbusController(val context: Context, val sensor: ColumbusSensor, val h
 
     private val lastTimestampMap = SparseLongArray()
     private var gestureListener: GestureListener? = null
-    private val softGates =
-        setOf(
-            ChargingState(context, handler),
-            UsbState(context, handler),
-            ScreenTouch(context, handler),
-            SystemKeyPress(context, handler),
-            PowerState(context, handler),
-        )
-    private val softGateListener =
-        object : Gate.Listener {
-            override fun onGateChanged(gate: Gate) {}
-        }
-    private val gestureSensorListener =
-        object : ColumbusSensor.Listener {
-            override fun onGestureDetected(sensor: ColumbusSensor, msg: Int) {
-                if (isThrottled(msg)) {
-                    dlog(TAG, "Gesture $msg throttled")
-                    return
-                }
-                if (blockingGate()) return
-                gestureListener?.onGestureDetected(sensor, msg)
-            }
-        }
+    private val softGates: Set<Gate>
+    private val softGateListener: Gate.Listener
+    private val gestureSensorListener: ColumbusSensor.Listener
 
     init {
+        softGates =
+            setOf(
+                ChargingState(context, handler),
+                UsbState(context, handler),
+                ScreenTouch(context, handler),
+                SystemKeyPress(context, handler),
+                PowerState(context, handler),
+            )
+
+        softGateListener =
+            object : Gate.Listener {
+                override fun onGateChanged(gate: Gate) {}
+            }
+
+        gestureSensorListener =
+            object : ColumbusSensor.Listener {
+                override fun onGestureDetected(sensor: ColumbusSensor, msg: Int) {
+                    if (isThrottled(msg)) {
+                        dlog(TAG, "Gesture $msg throttled")
+                        return
+                    }
+                    if (blockingGate()) return
+                    gestureListener?.onGestureDetected(sensor, msg)
+                }
+            }
+
         sensor.setGestureListener(gestureSensorListener)
     }
 
