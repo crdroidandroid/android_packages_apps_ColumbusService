@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2020 The Proton AOSP Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Быстрое касание</string>
+
+    <!-- Entry points in Settings -->
+    <string name="settings_entry_title">Быстрый стук</string>
+    <string name="settings_entry_summary_on">Вкл. / <xliff:g id="action" example="Сделать снимок экрана">%1$s</xliff:g></string>
+    <string name="settings_entry_summary_off">Выкл.</string>
+    <string name="settings_search_keywords">Быстрый стук, стук снизу, стук, касание, жест, ассистент</string>
+
+    <!-- Items in Active Edge gesture settings -->
+    <string name="setting_enabled_title">Использовать быстый стук</string>
+    <string name="setting_footer_content">Чтобы выполнить какое-либо действие, дважды стукните по задней панели телефона примерно посередине</string>
+    <string name="setting_sensitivity_title">Чувствительность</string>
+    <string name="setting_sensitivity_light">Лёгкий стук</string>
+    <string name="setting_sensitivity_heavy">Сильный стук</string>
+    <string name="setting_screen_off_title">Разрешить, когда экран выключен</string>
+    <string name="setting_screen_off_summary">Может привести к ложным срабатываниям</string>
+    <string name="setting_screen_off_blocked_summary">Заблокирован текущим действием</string>
+    <string name="setting_action_title">Двойной стук по задней панели</string>
+
+    <!-- App picker -->
+    <string name="app_picker_dialog_title">Выбранная программа</string>
+    <string name="app_select_title">Выбор программы</string>
+    <string name="activity_select_title">Выбор действия</string>
+    <string name="launch_app_select_summary">Выберите программу для запуска быстрым стуком</string>
+
+    <!-- Actions -->
+    <string name="action_screenshot_name">Сделать снимок экрана</string>
+    <string name="action_assistant_name">Запуск ассистента</string>
+    <string name="action_media_name">Медиа играть/пауза</string>
+    <string name="action_notifications_name">Открыть уведомления</string>
+    <string name="action_overview_name">Список недавних приложений</string>
+    <string name="action_camera_name">Открыть камеру</string>
+    <string name="action_power_menu_name">Меню копки питания</string>
+    <string name="action_mute_name">Отключение звука звонков и уведомлений</string>
+    <string name="action_flashlight_name">Вкл/Выкл фонарик</string>
+    <string name="action_screen_name">Вкл/Выкл экран</string>
+    <string name="action_launch_name">Запустить программу</string>
+
+    <!-- Toast -->
+    <string name="gesture_detected">Обнаружен двойной стук!</string>
+
+    <!-- Haptic feedback intensity -->
+    <string name="pref_title_haptic_intensity">Интенсивность вибрации</string>
+    <string-array name="pref_haptic_intensity_entries">
+        <item>Лёгкая</item>
+        <item>Средняя</item>
+        <item>Сильная</item>
+    </string-array>
+</resources>
