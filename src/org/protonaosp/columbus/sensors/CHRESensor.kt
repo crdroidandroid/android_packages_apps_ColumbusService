@@ -26,7 +26,8 @@ class CHRESensor(val context: Context, var sensitivity: Float, val handler: Hand
     private var isListening: Boolean = false
 
     init {
-        contextHubManager = context.getSystemService(Context.CONTEXTHUB_SERVICE) as ContextHubManager
+        contextHubManager =
+            context.getSystemService(Context.CONTEXTHUB_SERVICE) as ContextHubManager
         callback = CHRECallback()
     }
 

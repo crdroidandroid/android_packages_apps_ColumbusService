@@ -7,6 +7,7 @@ package org.protonaosp.columbus.actions
 
 import android.content.Context
 import android.content.Intent
+import android.os.UserHandle
 import org.protonaosp.columbus.R
 import org.protonaosp.columbus.getDePrefs
 import org.protonaosp.columbus.getLaunchActionApp
@@ -30,14 +31,16 @@ class LaunchAction(context: Context) : Action(context) {
 
         val intent: Intent? =
             if (launchActivity) {
-                    Intent(Intent.ACTION_MAIN).apply { setClassName(packageName, activity) }
+                    Intent().apply { setClassName(packageName, activity) }
                 } else {
                     context.packageManager.getLaunchIntentForPackage(packageName)
                 }
                 ?.apply { (Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP) }
 
+        if (intent == null) return
+
         try {
-            context.startActivity(intent)
+            context.startActivityAsUser(intent, UserHandle.CURRENT)
         } catch (e: Exception) {}
     }
 
