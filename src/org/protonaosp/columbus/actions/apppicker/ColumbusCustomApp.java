@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: The Dirty Unicorns Project
+ * SPDX-FileCopyrightText: TheParasiteProject
+ * SPDX-License-Identifier: GPL-3.0
+ */
+
 package org.protonaosp.columbus.actions.apppicker;
 
 import android.content.SharedPreferences;

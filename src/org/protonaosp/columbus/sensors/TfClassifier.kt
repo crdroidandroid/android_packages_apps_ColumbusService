@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: TheParasiteProject
+ * SPDX-License-Identifier: GPL-3.0
+ */
+
 package org.protonaosp.columbus.sensors
 
 import android.content.res.AssetManager

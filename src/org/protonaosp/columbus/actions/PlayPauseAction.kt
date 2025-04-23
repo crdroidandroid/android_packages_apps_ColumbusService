@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: TheParasiteProject
+ * SPDX-License-Identifier: GPL-3.0
+ */
+
 package org.protonaosp.columbus.actions
 
 import android.content.Context

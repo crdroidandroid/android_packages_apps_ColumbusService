@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: Kieron Quinn
+ * SPDX-FileCopyrightText: TheParasiteProject
+ * SPDX-License-Identifier: GPL-3.0
+ */
+
 package org.protonaosp.columbus.gates
 
 import android.content.BroadcastReceiver
