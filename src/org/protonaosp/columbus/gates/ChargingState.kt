@@ -15,8 +15,8 @@ import android.os.Handler
 class ChargingState(context: Context, handler: Handler) : TransientGate(context, handler) {
     private val powerReceiver =
         object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                blockForMillis(GATE_DURATION)
+            override fun onReceive(context: Context?, intent: Intent?) {
+                blockForMillis(duration)
             }
         }
 

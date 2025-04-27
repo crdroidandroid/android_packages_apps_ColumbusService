@@ -42,4 +42,7 @@
 
     <!-- Set APSensor throttle timeout. -->
     <integer name="default_apsensor_throttle_ms" translatable="false">500</integer>
+
+    <!-- Set Gate duration. -->
+    <integer name="default_gate_duration_ms" translatable="false">500</integer>
 </resources>

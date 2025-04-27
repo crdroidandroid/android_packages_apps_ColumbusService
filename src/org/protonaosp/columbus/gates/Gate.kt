@@ -9,6 +9,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import java.util.LinkedHashSet
+import org.protonaosp.columbus.R
 
 abstract class Gate(var context: Context, handler: Handler, handlerType: Int) {
     private var active: Boolean = false
@@ -19,6 +20,11 @@ abstract class Gate(var context: Context, handler: Handler, handlerType: Int) {
             Handler.createAsync(Looper.getMainLooper())
         } else {
             handler
+        }
+
+    val duration: Long
+        get() {
+            return context.resources.getInteger(R.integer.default_gate_duration_ms).toLong()
         }
 
     interface Listener {

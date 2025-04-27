@@ -20,7 +20,7 @@ class PowerState(context: Context, handler: Handler) : TransientGate(context, ha
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent == null) return
                 if (intent.action == Intent.ACTION_SCREEN_ON) {
-                    blockForMillis(GATE_DURATION)
+                    blockForMillis(duration)
                 } else {
                     setBlocking(false)
                 }

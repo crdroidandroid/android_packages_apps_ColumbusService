@@ -48,7 +48,7 @@ class ScreenTouch(context: Context, val handler: Handler) : Gate(context, handle
                     MotionEvent.ACTION_CANCEL,
                     MotionEvent.ACTION_OUTSIDE -> {
                         handler.removeCallbacks(clearBlocking)
-                        handler.postDelayed(clearBlocking, GATE_DURATION)
+                        handler.postDelayed(clearBlocking, duration)
                     }
                 }
             }

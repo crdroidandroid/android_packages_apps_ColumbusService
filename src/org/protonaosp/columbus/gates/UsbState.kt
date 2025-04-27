@@ -24,7 +24,7 @@ class UsbState(context: Context, handler: Handler) : TransientGate(context, hand
                 if (connected != usbConnected) {
                     usbConnected = connected
                     if (connected) {
-                        blockForMillis(GATE_DURATION)
+                        blockForMillis(duration)
                     } else {
                         setBlocking(false)
                     }

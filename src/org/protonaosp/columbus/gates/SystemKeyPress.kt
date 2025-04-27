@@ -38,7 +38,7 @@ class SystemKeyPress(context: Context, handler: Handler) : Gate(context, handler
                     }
                     KeyEvent.ACTION_UP -> {
                         handler.removeCallbacks(clearBlocking)
-                        handler.postDelayed(clearBlocking, GATE_DURATION)
+                        handler.postDelayed(clearBlocking, duration)
                     }
                 }
             }
