@@ -159,9 +159,11 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
         addToFeatureVector(gyroXs, gyroTuned, sizeFeatureWindow * 3)
         addToFeatureVector(gyroYs, gyroTuned, sizeFeatureWindow * 4)
         addToFeatureVector(gyroZs, gyroTuned, sizeFeatureWindow * 5)
-        featureVector = scaleGyroData(featureVector, 10f)
 
-        val predict = tflite?.predict(featureVector, 7)
+        val _featureVector = featureVector
+        featureVector = scaleGyroData(_featureVector, 10f)
+
+        val predict = tflite?.predict(_featureVector, 7)
 
         if (predict.isNullOrEmpty()) {
             return
