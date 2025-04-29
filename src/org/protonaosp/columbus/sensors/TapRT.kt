@@ -20,7 +20,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
     private val maxTimeGapNs: Long = 500000000L
     private val frameAlignPeak: Int = 12
     private val framePriorPeak: Int = 6
-    var result: TapClass = TapClass.Front
+    var result: Int = TapClass.Front.ordinal
     val positivePeakDetector: PeakDetector = PeakDetector()
     val negativePeakDetector: PeakDetector = PeakDetector()
     val timestampsBackTap: Deque<Long> = ArrayDeque()
@@ -102,7 +102,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
         if (accZs.size == interval) {
             recognizeTapHeuristic()
         }
-        if (result == TapClass.Back) {
+        if (result == TapClass.Back.ordinal) {
             timestampsBackTap.addLast(sampleTime)
         }
     }
@@ -115,10 +115,11 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
             featureVector = ArrayList(accZs)
             result =
                 if (negativePeakId > 0 && negativePeakId < 3) {
-                    TapClass.Back
-                } else {
-                    TapClass.Others
-                }
+                        TapClass.Back
+                    } else {
+                        TapClass.Others
+                    }
+                    .ordinal
         }
     }
 
@@ -166,8 +167,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
             return
         }
 
-        val maxId = Util.getMaxId(predict[0])
-        result = TapClass.values()[maxId]
+        result = Util.getMaxId(predict[0])
     }
 
     fun reset(clearFv: Boolean) {
@@ -198,7 +198,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
         interval: Long,
         heuristicMode: Boolean,
     ) {
-        result = TapClass.Others
+        result = TapClass.Others.ordinal
         if (heuristicMode) {
             updateHeuristic(sensorType, rawLastX, rawLastY, rawLastZ, rawLastT, interval)
         } else {
@@ -280,7 +280,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
                     updateGyro()
                     recognizeTapML()
                 }
-                if (result == TapClass.Back) {
+                if (result == TapClass.Back.ordinal) {
                     timestampsBackTap.addLast(rawLastT)
                 }
                 return
