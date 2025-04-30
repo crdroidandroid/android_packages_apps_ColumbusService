@@ -184,8 +184,8 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
         }
     }
 
-    fun updateAccAndPeakDetectors() {
-        updateAcc()
+    fun processAccAndKeySignal() {
+        processAcc()
         val lastAccZ = accZs.last()
         positivePeakDetector.update(lastAccZ.toFloat(), resampleAcc.results.time)
         negativePeakDetector.update(-lastAccZ.toFloat(), resampleAcc.results.time)
@@ -273,19 +273,17 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
         when (sensorType) {
             Sensor.TYPE_ACCELEROMETER -> {
                 while (resampleAcc.update(rawLastX, rawLastY, rawLastZ, rawLastT)) {
-                    updateAccAndPeakDetectors()
+                    processAccAndKeySignal()
                 }
-                return
             }
             Sensor.TYPE_GYROSCOPE -> {
                 while (resampleGyro.update(rawLastX, rawLastY, rawLastZ, rawLastT)) {
-                    updateGyro()
+                    processGyro()
                     recognizeTapML()
                 }
                 if (result == TapClass.Back.ordinal) {
                     timestampsBackTap.addLast(rawLastT)
                 }
-                return
             }
         }
     }

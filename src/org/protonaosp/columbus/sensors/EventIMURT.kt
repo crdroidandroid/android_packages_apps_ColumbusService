@@ -30,7 +30,7 @@ open class EventIMURT(val _sizeWindowNs: Long, val sizeFeatureWindow: Int, val n
     val highpassGyro: Highpass3C = Highpass3C()
     var tflite: TfClassifier? = null
 
-    fun updateAcc() {
+    fun processAcc() {
         val sample = resampleAcc.results
         var update: Point3f =
             highpassAcc.update(
@@ -49,7 +49,7 @@ open class EventIMURT(val _sizeWindowNs: Long, val sizeFeatureWindow: Int, val n
         }
     }
 
-    fun updateGyro() {
+    fun processGyro() {
         val sample = resampleGyro.results
         var update: Point3f =
             highpassGyro.update(

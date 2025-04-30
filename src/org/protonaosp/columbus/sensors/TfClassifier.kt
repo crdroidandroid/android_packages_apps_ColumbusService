@@ -64,7 +64,7 @@ class TfClassifier(assetManager: AssetManager, assetFileName: String) {
             return ArrayList()
         }
 
-        @Suppress("UNCHECKED_CAST") val tfliteContent = tfliteOut[0] as? Array<FloatArray>
+        @Suppress("UNCHECKED_CAST") val tfliteContent = tfliteOut[0] as Array<FloatArray>?
         if (tfliteContent == null) {
             dlog(TAG, "Result content is invalid")
             return ArrayList()

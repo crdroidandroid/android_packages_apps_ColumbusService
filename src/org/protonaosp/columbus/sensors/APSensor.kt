@@ -83,7 +83,7 @@ class APSensor(val context: Context, var sensitivity: Float, val handler: Handle
         }
 
         fun updateSensitivity() {
-            (tap as? TapRT)?.run {
+            tap.apply {
                 positivePeakDetector.minNoiseTolerate = sensitivity
                 reset(heuristicMode)
             }
@@ -92,7 +92,7 @@ class APSensor(val context: Context, var sensitivity: Float, val handler: Handle
 
     override fun startListening() {
         callback.setListening(true, SensorManager.SENSOR_DELAY_FASTEST)
-        (tap as? TapRT)?.run {
+        tap.apply {
             lowpassAcc.para = 1f
             lowpassGyro.para = 1f
             highpassAcc.para = 0.05f
