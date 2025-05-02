@@ -39,45 +39,34 @@ class TfClassifier(assetManager: AssetManager, assetFileName: String) {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun predict(input: ArrayList<Float>, size: Int): ArrayList<ArrayList<Float>> {
         val interpreter = interpreter ?: return ArrayList()
 
         val tfliteIn =
-            Array(1) { Array(input.size) { Array(1) { FloatArray(1) } } }
-                .apply {
-                    for (i in input.indices) {
-                        this[0][i][0][0] = input[i]
-                    }
-                }
+            java.lang.reflect.Array.newInstance(Float::class.javaPrimitiveType, 1, input.size, 1, 1)
+                as Array<Array<Array<FloatArray>>>
 
-        val tfliteOut = HashMap<Int, Any>().apply { this[0] = Array(1) { FloatArray(size) } }
-
-        try {
-            interpreter.runForMultipleInputsOutputs(arrayOf<Any>(tfliteIn), tfliteOut)
-        } catch (e: Exception) {
-            dlog(TAG, "Error running inference: ${e.message}")
-            return ArrayList()
+        for (i in 0 until input.size) {
+            tfliteIn[0][i][0][0] = input[i]
         }
 
-        if (tfliteOut.isEmpty()) {
-            dlog(TAG, "Result is invalid")
-            return ArrayList()
-        }
+        val tfliteOut =
+            HashMap<Int, Any>().apply {
+                this[0] =
+                    java.lang.reflect.Array.newInstance(Float::class.javaPrimitiveType, 1, size)
+            }
 
-        @Suppress("UNCHECKED_CAST") val tfliteContent = tfliteOut[0] as Array<FloatArray>?
-        if (tfliteContent == null) {
-            dlog(TAG, "Result content is invalid")
-            return ArrayList()
-        }
+        interpreter.runForMultipleInputsOutputs(arrayOf<Any>(tfliteIn), tfliteOut)
 
-        val output =
-            arrayListOf(
-                ArrayList<Float>().apply {
-                    for (i in 0 until size) {
-                        add(tfliteContent[0][i])
-                    }
-                }
-            )
+        val tfliteContent = tfliteOut[0] as Array<FloatArray>
+
+        val output = ArrayList<ArrayList<Float>>()
+        val outputInner = ArrayList<Float>()
+        for (i in 0 until size) {
+            outputInner.add(tfliteContent[0][i])
+        }
+        output.add(outputInner)
 
         return output
     }
