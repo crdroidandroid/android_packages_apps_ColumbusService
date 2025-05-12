@@ -1,20 +1,22 @@
 # This is a configuration file for ProGuard.
 # http://proguard.sourceforge.net/index.html#manual/usage.html
 
+-allowaccessmodification
+
 # Keep classes that may be inflated from XML.
--keepclasseswithmembers class * {
+-keepclasseswithmembers,allowoptimization,allowaccessmodification class * {
     public <init>(android.content.Context, android.util.AttributeSet);
 }
--keepclasseswithmembers class * {
+-keepclasseswithmembers,allowoptimization,allowaccessmodification class * {
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
 # Keep annotated classes or class members.
--keep @androidx.annotation.Keep class *
--keepclassmembers class * {
+-keep,allowoptimization,allowaccessmodification @androidx.annotation.Keep class *
+-keepclassmembers,allowoptimization,allowaccessmodification class * {
     @androidx.annotation.Keep *;
 }
 
--keep,allowoptimization class com.android.systemui.** { *; }
--keep,allowoptimization class org.protonaosp.** { *; }
--keep,allowoptimization class org.tensorflow.** { *; }
+-keep,allowoptimization,allowaccessmodification class com.android.systemui.** { *; }
+-keep,allowoptimization,allowaccessmodification class org.protonaosp.** { *; }
+-keep,allowoptimization,allowaccessmodification class org.tensorflow.** { *; }

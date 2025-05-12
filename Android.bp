@@ -34,6 +34,9 @@ android_app {
     jni_libs: ["libtensorflowlite_jni"],
     use_embedded_native_libs: true,
     optimize: {
+        enabled: true,
+        shrink: true,
+        optimize: true,
         proguard_flags_files: ["proguard.flags"],
     },
     proto: {
