@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2020 The Proton AOSP Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Entry points in Settings -->
+    <string name="settings_entry_title">双击背部</string>
+    <string name="settings_entry_summary_on">开启 / <xliff:g id="action" example="Take screenshot">%1$s</xliff:g></string>
+    <string name="settings_entry_summary_off">关闭</string>
+    <string name="settings_search_keywords">Quick Tap, back tap, tap, gesture, assist, assistant</string>
+
+    <!-- Items in Active Edge gesture settings -->
+    <string name="setting_enabled_title">使用双击背部</string>
+    <string name="setting_footer_content">要执行操作，双击手机背面中心处两次</string>
+    <string name="setting_sensitivity_title">灵敏度</string>
+    <string name="setting_sensitivity_light">轻触</string>
+    <string name="setting_sensitivity_heavy">重击</string>
+    <string name="setting_screen_off_title">屏幕关闭时允许</string>
+    <string name="setting_screen_off_summary">可能会增加误触发</string>
+    <string name="setting_screen_off_blocked_summary">被当前操作阻止</string>
+    <string name="setting_action_title">在背部点击两次</string>
+
+    <!-- App picker -->
+    <string name="app_picker_dialog_title">选择一个应用</string>
+    <string name="app_select_title">选择应用</string>
+    <string name="activity_select_title">选择活动</string>
+    <string name="launch_app_select_title">@string/app_picker_dialog_title</string>
+    <string name="launch_app_select_summary">选择要使用双击背部启动的应用程序</string>
+
+    <!-- Actions -->
+    <string name="action_screenshot_name">截取屏幕</string>
+    <string name="action_assistant_name">打开语音助手</string>
+    <string name="action_media_name">媒体播放/暂停</string>
+    <string name="action_notifications_name">打开通知栏</string>
+    <string name="action_overview_name">打开最近任务</string>
+    <string name="action_camera_name">打开相机</string>
+    <string name="action_power_menu_name">打开电源菜单</string>
+    <string name="action_mute_name">将通话和通知静音</string>
+    <string name="action_flashlight_name">开启或关闭手电筒</string>
+    <string name="action_screen_name">开启或关闭屏幕</string>
+    <string name="action_launch_name">启动应用</string>
+
+    <!-- Toast -->
+    <string name="gesture_detected">检测到双击背部</string>
+
+    <!-- Haptic feedback intensity -->
+    <string name="pref_title_haptic_intensity">振动反馈强度</string>
+    <string-array name="pref_haptic_intensity_entries">
+        <item>弱</item>
+        <item>中</item>
+        <item>强</item>
+    </string-array>
+</resources>
