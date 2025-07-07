@@ -29,6 +29,7 @@ android_app {
         "androidx.core_core-ktx",
         "tensorflowlite_java",
         "SettingsLib",
+        "SettingsLibSettingsTheme",
         "SystemUISharedLib",
     ],
     jni_libs: ["libtensorflowlite_jni"],
