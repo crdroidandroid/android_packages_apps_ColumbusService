@@ -33,7 +33,8 @@ fun getModelFileName(context: Context): String {
         "coral",
         "crosshatch",
         "flame",
-        "redfin" -> "tap7cls_${model}"
+        "redfin",
+        "custom" -> "tap7cls_${model}"
         else -> "quickTapBaseModel"
     } + ".tflite"
 }

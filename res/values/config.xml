@@ -22,7 +22,8 @@
     <bool name="default_allow_screen_off" translatable="false">true</bool>
 
     <!-- Set default TensorFlow Lite model for back tap detection depends on your device's size.
-         Supprted models are quickTapBaseModel, bramble, coral, crosshatch, flame and redfin.
+         Supprted models are quickTapBaseModel, bramble, coral, crosshatch, flame, redfin and custom.
+         To use custom model, set value to "custom" in overlay and add custom model to res/raw/tap7cls_custom.tflite
          Default to quickTapBaseModel.
     -->
     <string name="default_model" translatable="false" />

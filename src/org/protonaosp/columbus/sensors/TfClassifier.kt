@@ -5,15 +5,21 @@
 
 package org.protonaosp.columbus.sensors
 
+import android.content.Context
 import android.content.res.AssetManager
+import android.content.res.Resources
 import java.io.FileInputStream
+import java.io.InputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.nio.channels.FileChannel
 import java.util.ArrayList
 import java.util.HashMap
+import org.protonaosp.columbus.R
 import org.protonaosp.columbus.dlog
 import org.tensorflow.lite.Interpreter
 
-class TfClassifier(assetManager: AssetManager, assetFileName: String) {
+class TfClassifier(context: Context) {
 
     companion object {
         private const val TAG = "Columbus/TfClassifier"
@@ -22,20 +28,35 @@ class TfClassifier(assetManager: AssetManager, assetFileName: String) {
     private var interpreter: Interpreter? = null
 
     init {
+        val assetFileName: String = getModelFileName(context)
         try {
-            val assetFd = assetManager.openFd(assetFileName)
             interpreter =
-                Interpreter(
-                    FileInputStream(assetFd.fileDescriptor)
-                        .channel
-                        .map(
-                            FileChannel.MapMode.READ_ONLY,
-                            assetFd.startOffset,
-                            assetFd.declaredLength,
-                        )
-                )
+                if (assetFileName == "tap7cls_custom.tflite") {
+                    val resources: Resources = context.resources
+                    val inputStream: InputStream = resources.openRawResource(R.raw.tap7cls_custom)
+                    val fileBytes = inputStream.readBytes()
+                    val byteBuffer = ByteBuffer.allocateDirect(fileBytes.size)
+                    byteBuffer.order(ByteOrder.nativeOrder())
+                    byteBuffer.put(fileBytes)
+                    byteBuffer.rewind()
+                    inputStream.close()
+                    Interpreter(byteBuffer)
+                } else {
+                    val assetManager: AssetManager = context.assets
+                    val assetFd = assetManager.openFd(assetFileName)
+                    Interpreter(
+                        FileInputStream(assetFd.fileDescriptor)
+                            .channel
+                            .map(
+                                FileChannel.MapMode.READ_ONLY,
+                                assetFd.startOffset,
+                                assetFd.declaredLength,
+                            )
+                    )
+                }
         } catch (e: Exception) {
             dlog(TAG, "Failed to load tflite file: ${e.message}")
+            null
         }
     }
 

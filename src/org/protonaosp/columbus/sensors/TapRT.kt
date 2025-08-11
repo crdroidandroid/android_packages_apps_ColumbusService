@@ -27,7 +27,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
     var wasPeakApproaching: Boolean = true
 
     init {
-        tflite = TfClassifier(context.getAssets(), getModelFileName(context))
+        tflite = TfClassifier(context)
         lowpassAcc.para = 1f
         lowpassGyro.para = 1f
         highpassAcc.para = 0.05f
