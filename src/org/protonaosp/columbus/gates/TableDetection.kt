@@ -34,9 +34,9 @@ class TableDetection(context: Context, val handler: Handler) : Gate(context, han
                 val values = event?.values ?: return
 
                 // Movement
-                var x = values[0].toDouble()
-                var y = values[1].toDouble()
-                var z = values[2].toDouble()
+                val x = values[0].toDouble()
+                val y = values[1].toDouble()
+                val z = values[2].toDouble()
                 val norm = sqrt(x * x + y * y + z * z)
 
                 // Normalize the accelerometer vector
@@ -48,10 +48,8 @@ class TableDetection(context: Context, val handler: Handler) : Gate(context, han
                     }
 
                 val isFlat =
-                    norm > 8.0 &&
-                        (inclination < 3 || inclination > 177) &&
-                        abs(x / norm) < 0.3 &&
-                        abs(y / norm) < 0.3
+                    norm > 8.0 && inclination < 5 && abs(x / norm) < 0.25 && abs(y / norm) < 0.25
+
                 if (wasFlat != isFlat) {
                     wasFlat = isFlat
                     setBlocking(isFlat)
