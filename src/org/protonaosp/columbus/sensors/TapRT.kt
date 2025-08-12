@@ -56,8 +56,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
     fun checkDoubleTapTiming(timestamp: Long): Int {
         val timestampFirst = timestampsBackTap.iterator()
         while (timestampFirst.hasNext()) {
-            val storedTimestamp = timestampFirst.next()
-            if (timestamp - storedTimestamp > maxTimeGapNs) {
+            if (timestamp - timestampFirst.next() > maxTimeGapNs) {
                 timestampFirst.remove()
             }
         }
@@ -68,9 +67,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
 
         val timestampSecond = timestampsBackTap.iterator()
         while (timestampSecond.hasNext()) {
-            val lastTimestamp = timestampsBackTap.last()
-            val storedTimestamp = timestampSecond.next()
-            if (lastTimestamp - storedTimestamp > minTimeGapNs) {
+            if (timestampsBackTap.last() - timestampSecond.next() > minTimeGapNs) {
                 timestampsBackTap.clear()
                 return 2
             }
@@ -80,22 +77,21 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
     }
 
     fun processKeySignalHeuristic() {
-        val sample = resampleAcc.results
-        val samplePoint = sample.point
-        val sampleTime = sample.time
-        val sampleInterval = resampleAcc.interval
-
         var update: Point3f =
             highpassAcc.update(
-                lowpassAcc.update(slopeAcc.update(samplePoint, 2400000f / sampleInterval.toFloat()))
+                lowpassAcc.update(
+                    slopeAcc.update(
+                        resampleAcc.results.point,
+                        2400000f / resampleAcc.interval.toFloat(),
+                    )
+                )
             )
-        val updatedZ = update.z.toFloat()
-        positivePeakDetector.update(updatedZ, sampleTime)
-        negativePeakDetector.update(-updatedZ, sampleTime)
+        positivePeakDetector.update(update.z.toFloat(), resampleAcc.results.time)
+        negativePeakDetector.update(-update.z.toFloat(), resampleAcc.results.time)
 
-        accZs.add(updatedZ)
+        accZs.add(update.z.toFloat())
 
-        val interval: Int = (sizeWindowNs / sampleInterval).toInt()
+        val interval: Int = (sizeWindowNs / resampleAcc.interval).toInt()
         while (accZs.size > interval) {
             accZs.removeFirst()
         }
@@ -103,7 +99,7 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
             recognizeTapHeuristic()
         }
         if (result == TapClass.Back.ordinal) {
-            timestampsBackTap.addLast(sampleTime)
+            timestampsBackTap.addLast(resampleAcc.results.time)
         }
     }
 
@@ -186,9 +182,8 @@ open class TapRT(val context: Context, val sizeWindowNs: Long) :
 
     fun processAccAndKeySignal() {
         processAcc()
-        val lastAccZ = accZs.last()
-        positivePeakDetector.update(lastAccZ.toFloat(), resampleAcc.results.time)
-        negativePeakDetector.update(-lastAccZ.toFloat(), resampleAcc.results.time)
+        positivePeakDetector.update(accZs.last().toFloat(), resampleAcc.results.time)
+        negativePeakDetector.update(-accZs.last().toFloat(), resampleAcc.results.time)
     }
 
     fun updateData(
