@@ -16,7 +16,7 @@
 -->
 <resources>
     <bool name="default_enabled" translatable="false">false</bool>
-    <integer name="default_sensitivity" translatable="false">3</integer>
+    <integer name="default_sensitivity" translatable="false">2</integer>
     <string name="default_action" translatable="false">screenshot</string>
     <string name="default_haptic_intensity" translatable="false">2</string>
     <bool name="default_allow_screen_off" translatable="false">true</bool>
