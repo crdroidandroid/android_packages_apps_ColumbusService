@@ -13,9 +13,8 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import com.android.settings.widget.LabeledSeekBarPreference
-import com.android.settings.widget.SeekBarPreference
 import com.android.settingslib.widget.MainSwitchPreference
+import com.android.settingslib.widget.SliderPreference
 import org.protonaosp.columbus.PREFS_NAME
 import org.protonaosp.columbus.R
 import org.protonaosp.columbus.getAction
@@ -65,9 +64,11 @@ class SettingsFragment :
         }
 
         // Sensitivity value
-        findPreference<LabeledSeekBarPreference>(getString(R.string.pref_key_sensitivity))?.apply {
-            progress = prefs.getSensitivity(mContext)
-            setHapticFeedbackMode(SeekBarPreference.HAPTIC_FEEDBACK_MODE_ON_TICKS)
+        findPreference<SliderPreference>(getString(R.string.pref_key_sensitivity))?.apply {
+            value = prefs.getSensitivity(mContext)
+            setHapticFeedbackMode(SliderPreference.HAPTIC_FEEDBACK_MODE_ON_TICKS)
+            sliderIncrement = 1
+            setTickVisible(true)
         }
 
         // Action value and summary

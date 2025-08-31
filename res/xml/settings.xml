@@ -13,7 +13,7 @@
         android:title="@string/setting_enabled_title"
         android:defaultValue="@bool/default_enabled" />
 
-    <com.android.settings.widget.LabeledSeekBarPreference
+    <com.android.settingslib.widget.SliderPreference
         android:key="@string/pref_key_sensitivity"
         android:title="@string/setting_sensitivity_title"
         app:textStart="@string/setting_sensitivity_light"
