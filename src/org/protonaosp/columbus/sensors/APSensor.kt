@@ -50,11 +50,8 @@ class APSensor(val context: Context, var sensitivity: Float, val handler: Handle
                 return
             }
 
-            val evType: Int = event.sensor!!.getType()
-            val evArr: FloatArray? = event.values
-            if (evArr == null) {
-                return
-            }
+            val evType: Int = event.sensor?.getType() ?: return
+            val evArr: FloatArray = event.values ?: return
             tap.updateData(
                 evType,
                 evArr[0],
