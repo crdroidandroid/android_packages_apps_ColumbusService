@@ -131,6 +131,9 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
             wakelock.release()
         }
 
+        // Cleanup current action
+        action.destroy()
+
         // Clear references
         action = DummyAction(this)
         super.onDestroy()
