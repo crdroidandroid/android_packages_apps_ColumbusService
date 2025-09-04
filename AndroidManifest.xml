@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2020 The Proton AOSP Project
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
+  SPDX-FileCopyrightText: The Proton AOSP Project
+  SPDX-FileCopyrightText: TheParasiteProject
+  SPDX-License-Identifier: Apache-2.0
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.protonaosp.columbus">
+    package="org.protonaosp.columbus"
+    android:sharedUserId="android.uid.system">
 
     <!-- Core -->
     <uses-permission android:name="android.permission.ACCESS_CONTEXT_HUB" />
@@ -40,6 +30,16 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
     <uses-permission android:name="android.permission.STATUS_BAR"/>
     <uses-permission android:name="android.permission.MONITOR_INPUT"/>
+    <uses-permission android:name="android.permission.RESET_SHORTCUT_MANAGER_THROTTLING" />
+    <uses-permission android:name="android.permission.ACCESS_SHORTCUTS" />
+    <uses-permission android:name="android.permission.START_TASKS_FROM_RECENTS"/>
+    <uses-permission android:name="android.permission.GET_INTENT_SENDER_INTENT"/>
+    <uses-permission android:name="android.permission.START_ANY_ACTIVITY"/>
+    <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND"/>
+    <uses-permission android:name="android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND"/>
+    <uses-permission android:name="android.permission.START_ACTIVITY_AS_CALLER"/>
+    <uses-permission android:name="android.permission.MANAGE_ACTIVITY_TASKS"/>
+    <uses-permission android:name="android.permission.REORDER_TASKS"/>
 
     <!-- Sensor HAL checks for this -->
     <permission android:name="com.google.android.columbus.permission.CONFIGURE_COLUMBUS_GESTURE"
@@ -109,17 +109,6 @@
             <meta-data android:name="com.android.settings.order" android:value="-100" />
             <!-- Don't show in work profiles -->
             <meta-data android:name="com.android.settings.profile" android:value="primary_profile_only" />
-        </activity>
-
-        <activity
-            android:name=".actions.apppicker.ColumbusCustomApp"
-            android:theme="@style/Theme.DeviceDefault.Dialog.MinWidth.DayNight"
-            android:label="@string/app_picker_dialog_title"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="org.protonaosp.columbus.actions.apppicker.ColumbusCustomApp" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
 
         <provider

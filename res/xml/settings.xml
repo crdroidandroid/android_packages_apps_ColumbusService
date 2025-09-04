@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!--
+  SPDX-FileCopyrightText: The Proton AOSP Project
+  SPDX-FileCopyrightText: TheParasiteProject
+  SPDX-License-Identifier: Apache-2.0
+-->
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:key="@string/screen_key_settings_page">
 
     <com.android.settingslib.widget.IllustrationPreference
         android:key="@string/pref_key_lottie"
@@ -12,6 +18,10 @@
         android:key="@string/pref_key_enabled"
         android:title="@string/setting_enabled_title"
         android:defaultValue="@bool/default_enabled" />
+
+    <PreferenceCategory
+        android:key="@string/categ_key_action"
+        android:title="@string/setting_action_title" />
 
     <com.android.settingslib.widget.SliderPreference
         android:key="@string/pref_key_sensitivity"
@@ -26,30 +36,17 @@
         android:defaultValue="@integer/default_sensitivity"
         android:dependency="@string/pref_key_enabled" />
 
-    <ListPreference
-        android:key="@string/pref_key_action"
-        android:title="@string/setting_action_title"
-        android:entries="@array/action_names"
-        android:entryValues="@array/action_values"
-        android:defaultValue="@string/default_action"
-        android:dependency="@string/pref_key_enabled" />
-
-    <Preference
-        android:key="@string/pref_key_launch_app"
-        android:title="@string/launch_app_select_title"
-        android:summary="@string/launch_app_select_summary">
-        <intent android:action="android.intent.action.MAIN"
-            android:targetPackage="org.protonaosp.columbus"
-            android:targetClass="org.protonaosp.columbus.actions.apppicker.ColumbusCustomApp" />
-    </Preference>
-
-    <ListPreference
+    <com.android.settingslib.widget.SliderPreference
         android:key="@string/pref_key_haptic_intensity"
-        android:title="@string/pref_title_haptic_intensity"
-        android:summary="%s"
-        android:entries="@array/pref_haptic_intensity_entries"
-        android:entryValues="@array/pref_haptic_intensity_values"
-        android:defaultValue="@string/default_haptic_intensity"
+        android:title="@string/setting_haptic_intensity_title"
+        app:textStart="@string/setting_haptic_intensity_light"
+        app:textEnd="@string/setting_haptic_intensity_strong"
+        android:min="0"
+        android:max="2"
+        app:seekBarIncrement="1"
+        app:tickMark="@android:color/transparent"
+        android:selectable="true"
+        android:defaultValue="@integer/default_haptic_intensity"
         android:dependency="@string/pref_key_enabled" />
 
     <SwitchPreferenceCompat
@@ -58,10 +55,5 @@
         android:summary="@string/setting_screen_off_summary"
         android:defaultValue="@bool/default_allow_screen_off"
         android:dependency="@string/pref_key_enabled" />
-
-    <com.android.settingslib.widget.FooterPreference
-        android:key="@string/pref_key_footer"
-        android:title="@string/setting_footer_content"
-        android:selectable="false" />
 
 </PreferenceScreen>

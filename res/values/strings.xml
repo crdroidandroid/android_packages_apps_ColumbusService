@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2020 The Proton AOSP Project
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+  SPDX-FileCopyrightText: The Proton AOSP Project
+  SPDX-FileCopyrightText: TheParasiteProject
+  SPDX-License-Identifier: Apache-2.0
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Quick Tap Service</string>
 
     <!-- Pref keys -->
     <string name="pref_key_lottie" translatable="false">video</string>
-    <string name="pref_key_enabled" translatable="false">enabled</string>
-    <string name="pref_key_footer" translatable="false">footer</string>
+    <string name="pref_key_enabled" translatable="false">columbus_enabled</string>
     <string name="pref_key_sensitivity" translatable="false">sensitivity</string>
-    <string name="pref_key_action" translatable="false">action</string>
-    <string name="pref_key_launch_app" translatable="false">launch_app</string>
-    <string name="pref_key_launch_app_name" translatable="false">launch_app_name</string>
-    <string name="pref_key_launch_app_shortcut" translatable="false">launch_app_shortcut</string>
+    <string name="pref_key_action" translatable="false">columbus_action</string>
+    <string name="pref_key_launch_app" translatable="false">columbus_launch_app</string>
+    <string name="pref_key_launch_app_shortcut" translatable="false">columbus_launch_app_shortcut</string>
     <string name="pref_key_allow_screen_off" translatable="false">allow_screen_off</string>
     <string name="pref_key_allow_screen_off_action_forced" translatable="false">allow_screen_off_action_forced</string>
     <string name="pref_key_haptic_intensity" translatable="false">haptic_intensity</string>
+    <string name="pref_key_launch_app_summary" translatable="false">launch_app_summary</string>
+    <string name="pref_key_launch_shortcut_app_summary" translatable="false">launch_shortcut_app_summary</string>
+
+    <!-- Categ keys -->
+    <string name="categ_key_action" translatable="false">columbus_action_category</string>
+    <string name="categ_key_app_list" translatable="false">columbus_app_list</string>
+    <string name="categ_key_app_shortcut_list" translatable="false">columbus_app_shortcut_list</string>
+
+    <!-- Screen keys -->
+    <string name="screen_key_settings_page" translatable="false">settings_page</string>
+    <string name="screen_key_launch_settings_page" translatable="false">launch_settings_page</string>
+    <string name="screen_key_launch_app_shortcut_settings_page" translatable="false">launch_app_shortcut_settings_page</string>
 
     <!-- Other non-translatable -->
     <string name="summary_placeholder" translatable="false">&#160;</string>
-    <string name="launch_app_default" translatable="false">none</string>
 
     <!-- Entry points in Settings -->
     <string name="settings_entry_title">Quick Tap</string>
@@ -40,36 +39,42 @@
     <string name="settings_entry_summary_off">Off</string>
     <string name="settings_search_keywords">Quick Tap, back tap, tap, gesture, assist, assistant</string>
 
-    <!-- Items in Active Edge gesture settings -->
+    <!-- Items in Quick Tap gesture settings -->
     <string name="setting_enabled_title">Use Quick Tap</string>
     <string name="setting_footer_content">To perform an action, tap back of your phone twice near the middle</string>
     <string name="setting_sensitivity_title">Sensitivity</string>
     <string name="setting_sensitivity_light">Light tap</string>
     <string name="setting_sensitivity_heavy">Heavy tap</string>
+    <string name="setting_haptic_intensity_title">Haptic feedback intensity</string>
+    <string name="setting_haptic_intensity_light">Light</string>
+    <string name="setting_haptic_intensity_strong">Strong</string>
     <string name="setting_screen_off_title">Allow when screen is off</string>
     <string name="setting_screen_off_summary">May increase false triggers</string>
     <string name="setting_screen_off_blocked_summary">Blocked by current action</string>
-    <string name="setting_action_title">On back tap twice</string>
-
-    <!-- App picker -->
-    <string name="app_picker_dialog_title">Select an app</string>
-    <string name="app_select_title">Select app</string>
-    <string name="activity_select_title">Select activity</string>
-    <string name="launch_app_select_title">@string/app_picker_dialog_title</string>
-    <string name="launch_app_select_summary">Select an app to launch with Quick Tap</string>
+    <string name="setting_action_title" product="default">Double tap back of phone to</string>
+    <string name="setting_action_title" product="device">Double tap back of device to</string>
+    <string name="setting_action_title" product="tablet">Double tap back of tablet to</string>
+    <string name="launch_settings_activity_title">Quick Tap settings</string>
+    <string name="setting_app_selection_help_text" product="default">Select an app to open when you double tap the back of your phone. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
+    <string name="setting_app_selection_help_text" product="device">Select an app to open when you double tap the back of your device. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
+    <string name="setting_app_selection_help_text" product="tablet">Select an app to open when you double tap the back of your tablet. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
+    <string name="setting_app_shortcut_selection_help_text">Select shortcut to launch when this app opened by Quick Tap.</string>
+    <string name="radio_button_extra_widget_a11y_label"><xliff:g id="action">%1$s</xliff:g> settings</string>
+    <string name="setting_action_launch_summary_no_selection">No app selected</string>
+    <string name="setting_action_launch_summary_not_installed">App not installed</string>
 
     <!-- Actions -->
     <string name="action_screenshot_name">Take screenshot</string>
-    <string name="action_assistant_name">Open assistant</string>
-    <string name="action_media_name">Media play/pause</string>
-    <string name="action_notifications_name">Open notification shelf</string>
-    <string name="action_overview_name">Open recent apps switcher</string>
+    <string name="action_assistant_name">Access your digital assistant</string>
+    <string name="action_media_name">Play or pause media</string>
+    <string name="action_notifications_name">Show notifications</string>
+    <string name="action_overview_name">See recent apps</string>
     <string name="action_camera_name">Open camera</string>
     <string name="action_power_menu_name">Open power menu</string>
     <string name="action_mute_name">Mute calls and notifications</string>
-    <string name="action_flashlight_name">Turn flashlight on/off</string>
-    <string name="action_screen_name">Turn screen on/off</string>
-    <string name="action_launch_name">Launch app</string>
+    <string name="action_flashlight_name">Toggle flashlight</string>
+    <string name="action_screen_name">Turn screen on or off</string>
+    <string name="action_launch_name">Open app</string>
 
     <string name="action_screenshot_value">screenshot</string>
     <string name="action_assistant_value">assistant</string>
@@ -114,16 +119,4 @@
     <!-- Toast -->
     <string name="gesture_detected">Quick Tap detected!</string>
 
-    <!-- Haptic feedback intensity -->
-    <string name="pref_title_haptic_intensity">Haptic feedback intensity</string>
-    <string-array name="pref_haptic_intensity_entries">
-        <item>Light</item>
-        <item>Medium</item>
-        <item>Strong</item>
-    </string-array>
-    <string-array name="pref_haptic_intensity_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
 </resources>

@@ -98,6 +98,8 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         updateEnabled()
         updateScreenCallback()
 
+        PackageStateManager.onCreate(this)
+
         // Only register for changes after initial pref updates
         prefs.registerOnSharedPreferenceChangeListener(this)
     }
@@ -105,6 +107,8 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     override fun onDestroy() {
         // Cleanup preferences listener
         prefs.unregisterOnSharedPreferenceChangeListener(this)
+
+        PackageStateManager.onDestroy()
 
         // Only unregister if we previously registered
         if (screenCallbackRegistered) {
@@ -162,6 +166,9 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     private fun updateAction() {
         val key = prefs.getAction(this)
         dlog(TAG, "Setting action to $key")
+        if (::action.isInitialized) {
+            action.destroy()
+        }
         action = createAction(key)
 
         // For settings
@@ -216,16 +223,16 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         vibDoubleTap =
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 when (value) {
-                    "0" -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
-                    "1" -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
-                    "2" -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
+                    0 -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
+                    1 -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
+                    2 -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
                     else -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
                 }
             } else {
                 when (value) {
-                    "0" -> VibrationEffect.createOneShot(25, VibrationEffect.DEFAULT_AMPLITUDE)
-                    "1" -> VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
-                    "2" -> VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE)
+                    0 -> VibrationEffect.createOneShot(25, VibrationEffect.DEFAULT_AMPLITUDE)
+                    1 -> VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
+                    2 -> VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE)
                     else -> VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE)
                 }
             }

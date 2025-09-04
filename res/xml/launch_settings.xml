@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: TheParasiteProject
+  SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:key="@string/screen_key_launch_settings_page"
+    android:title="@string/launch_settings_activity_title">
+
+    <com.android.settingslib.widget.TopIntroPreference
+        android:key="@string/pref_key_launch_app_summary"
+        android:title="@string/setting_app_selection_help_text" />
+
+    <PreferenceCategory
+        android:key="@string/categ_key_app_list" />
+
+</PreferenceScreen>
