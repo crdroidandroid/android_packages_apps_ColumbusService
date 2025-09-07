@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2020 The Proton AOSP Project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Szybkie dotknięcie</string>
+
+    <!-- Entry points in Settings -->
+    <string name="settings_entry_title">Szybkie dotknięcie</string>
+    <string name="settings_entry_summary_on">Włączono / <xliff:g id="action" example="Take screenshot">%1$s</xliff:g></string>
+    <string name="settings_entry_summary_off">Wyłączono</string>
+    <string name="settings_search_keywords">Szybkie dotknięcie, dotknięcie z tyłu, dotknięcie, gest, pomoc, asystent</string>
+
+    <!-- Items in Active Edge gesture settings -->
+    <string name="setting_enabled_title">Używaj Szybkiego dotknięcia</string>
+    <string name="setting_footer_content">Aby wykonać czynność, dwukrotnie dotknij tylnej części telefonu w pobliżu środka</string>
+    <string name="setting_sensitivity_title">Czułość</string>
+    <string name="setting_sensitivity_light">Delikatne dotknięcie</string>
+    <string name="setting_sensitivity_heavy">Ciężkie dotknięcie</string>
+    <string name="setting_screen_off_title">Zezwól, gdy ekran jest wyłączony</string>
+    <string name="setting_screen_off_summary">Może zwiększać liczbę fałszywych alarmów</string>
+    <string name="setting_screen_off_blocked_summary">Zablokowano przez bieżącą akcję</string>
+    <string name="setting_action_title">Podwójnie dotknij z tyłu</string>
+
+    <!-- App picker -->
+    <string name="app_picker_dialog_title">Wybierz aplikację</string>
+    <string name="app_select_title">Wybierz aplikację</string>
+    <string name="activity_select_title">Wybierz działanie</string>
+    <string name="launch_app_select_title">@string/app_picker_dialog_title</string>
+    <string name="launch_app_select_summary">Wybierz aplikację, którą chcesz uruchomić za pomocą funkcji Szybkiego dotknięcia</string>
+
+    <!-- Actions -->
+    <string name="action_screenshot_name">Wykonaj zrzut ekranu</string>
+    <string name="action_assistant_name">Uruchom asystenta</string>
+    <string name="action_media_name">Multimedia odtwórz/zatrzymaj</string>
+    <string name="action_notifications_name">Otwórz szufladę powiadomień</string>
+    <string name="action_overview_name">Otwórz przełącznik ostatnich aplikacji</string>
+    <string name="action_camera_name">Uruchom aparat</string>
+    <string name="action_power_menu_name">Otwórz menu zasilania</string>
+    <string name="action_mute_name">Wycisz połączenia i powiadomienia</string>
+    <string name="action_flashlight_name">Włącz/wyłącz latarkę</string>
+    <string name="action_screen_name">Włącz/wyłącz ekran</string>
+    <string name="action_launch_name">Uruchom aplikację</string>
+
+    <!-- Toast -->
+    <string name="gesture_detected">Szybkie dotknięcie wykryte!</string>
+
+    <!-- Haptic feedback intensity -->
+    <string name="pref_title_haptic_intensity">Intensywność reakcji dotykowej</string>
+    <string-array name="pref_haptic_intensity_entries">
+        <item>Niska</item>
+        <item>Średnia</item>
+        <item>Wysoka</item>
+    </string-array>
+</resources>
