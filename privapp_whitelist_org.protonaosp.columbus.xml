@@ -20,6 +20,7 @@
         <permission name="android.permission.STATUS_BAR" />
         <permission name="android.permission.MANAGE_USB" />
         <permission name="android.permission.READ_PHONE_STATE" />
+        <permission name="android.permission.MODIFY_PHONE_STATE" />
         <permission name="android.permission.WRITE_SECURE_SETTINGS" />
         <permission name="android.permission.MONITOR_INPUT" />
         <permission name="android.permission.START_TASKS_FROM_RECENTS" />

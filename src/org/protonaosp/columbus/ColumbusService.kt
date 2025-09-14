@@ -138,6 +138,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         return when (key) {
             "screenshot" -> ScreenshotAction(this)
             "assistant" -> AssistantAction(this)
+            "silence_call" -> SilenceCallAction(this)
             "media" -> PlayPauseAction(this)
             "notifications" -> NotificationAction(this)
             "overview" -> RecentsAction(this)
