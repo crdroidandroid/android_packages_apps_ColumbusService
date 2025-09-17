@@ -17,12 +17,16 @@ import android.os.VibrationEffect
 import android.os.VibratorManager
 import android.provider.Settings
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreferenceCompat
 import com.android.settingslib.widget.MainSwitchPreference
 import com.android.settingslib.widget.SelectorWithWidgetPreference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import com.android.settingslib.widget.SliderPreference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.protonaosp.columbus.LAUNCH_ACTION_SUMMARY
 import org.protonaosp.columbus.PREFS_NAME
 import org.protonaosp.columbus.R
@@ -79,10 +83,9 @@ class SettingsFragment :
 
         prefs = _context.getDePrefs()
         prefs.registerOnSharedPreferenceChangeListener(this)
-        populateRadioPreferences()
+        lifecycleScope.launch { populateRadioPreferences() }
 
         updateEnabled()
-        updateActionState()
         updateSensitivity(true)
         updateAllowScreenOff()
         updateHapticIntensity(true)
@@ -131,77 +134,92 @@ class SettingsFragment :
                 action.setChecked(isActionChecked)
             }
             action.setEnabled(prefs.getEnabled(_context))
-            action.updateSummary(_context)
+            if (action.key == _context.getString(R.string.action_launch_value)) {
+                lifecycleScope.launch {
+                    val summary =
+                        withContext(Dispatchers.IO) { LAUNCH_ACTION_SUMMARY.getSummary(_context) }
+                    withContext(Dispatchers.Main) {
+                        if (isAdded) {
+                            action.summary = summary
+                        }
+                    }
+                }
+            }
         }
     }
 
-    private fun populateRadioPreferences() {
+    private data class ActionPreferenceInfo(
+        val key: String,
+        val title: String,
+        val summary: CharSequence?,
+        val isLaunch: Boolean,
+    )
+
+    private suspend fun populateRadioPreferences() {
         val actionCategory =
             preferenceScreen.findPreference<PreferenceCategory>(
                 getString(R.string.categ_key_action)
             ) ?: return
 
-        actionCategory.removeAll()
+        val prefInfoList =
+            withContext(Dispatchers.IO) {
+                val actionNames = _context.resources.getStringArray(R.array.action_names)
+                val actionValues = _context.resources.getStringArray(R.array.action_values)
+                val launchAction = _context.getString(R.string.action_launch_value)
 
-        actionPreferences.clear()
-        val actionNames = _context.resources.getStringArray(R.array.action_names)
-        val actionValues = _context.resources.getStringArray(R.array.action_values)
-        val launchAction = _context.getString(R.string.action_launch_value)
-        for (i in 0 until actionValues.size) {
-            val action = actionValues[i]
-            val actionSummary: RadioButtonPreference.ContextualSummaryProvider? =
-                if (action == launchAction) {
-                    LAUNCH_ACTION_SUMMARY
-                } else {
-                    null
+                actionValues.mapIndexed { i, action ->
+                    val isLaunch = action == launchAction
+                    ActionPreferenceInfo(
+                        key = action,
+                        title = actionNames[i],
+                        summary =
+                            if (isLaunch) LAUNCH_ACTION_SUMMARY.getSummary(_context) else null,
+                        isLaunch = isLaunch,
+                    )
                 }
-            val onClickListener: View.OnClickListener? =
-                if (action == launchAction) {
-                    View.OnClickListener {
-                        requireActivity()
-                            .supportFragmentManager
-                            .beginTransaction()
-                            .replace(
-                                com.android.settingslib.collapsingtoolbar.R.id.content_frame,
-                                LaunchSettingsFragment(),
-                            )
-                            .addToBackStack(null)
-                            .commit()
+            }
+
+        withContext(Dispatchers.Main) {
+            if (!isAdded) return@withContext
+
+            actionCategory.removeAll()
+            actionPreferences.clear()
+
+            prefInfoList.forEach { info ->
+                val onClickListener =
+                    if (info.isLaunch) {
+                        View.OnClickListener {
+                            requireActivity()
+                                .supportFragmentManager
+                                .beginTransaction()
+                                .replace(
+                                    com.android.settingslib.collapsingtoolbar.R.id.content_frame,
+                                    LaunchSettingsFragment(),
+                                )
+                                .addToBackStack(null)
+                                .commit()
+                        }
+                    } else {
+                        null
                     }
-                } else {
-                    null
-                }
-            actionPreferences.put(
-                action,
-                makeRadioPreference(
-                    actionCategory,
-                    actionValues[i],
-                    actionNames[i],
-                    actionSummary,
-                    onClickListener,
-                ),
-            )
-        }
-    }
 
-    private fun makeRadioPreference(
-        category: PreferenceCategory,
-        key: String,
-        title: String?,
-        summaryProvider: RadioButtonPreference.ContextualSummaryProvider?,
-        onClickListener: View.OnClickListener?,
-    ): RadioButtonPreference {
-        val radioPref = RadioButtonPreference(_context)
-        radioPref.apply {
-            setKey(key)
-            setTitle(title)
-            setContextualSummaryProvider(summaryProvider)
-            updateSummary(this@SettingsFragment._context)
-            setOnClickListener(this@SettingsFragment)
-            setExtraWidgetOnClickListener(onClickListener)
-            category.addPreference(this)
+                val pref =
+                    RadioButtonPreference(_context).apply {
+                        key = info.key
+                        title = info.title
+                        summary = info.summary
+                        if (info.isLaunch) {
+                            setContextualSummaryProvider(LAUNCH_ACTION_SUMMARY)
+                        }
+                        setOnClickListener(this@SettingsFragment)
+                        setExtraWidgetOnClickListener(onClickListener)
+                        isPersistent = false
+                    }
+                actionCategory.addPreference(pref)
+                actionPreferences[info.key] = pref
+            }
+            updateActionState()
         }
-        return radioPref
     }
 
     private fun updateEnabled() {

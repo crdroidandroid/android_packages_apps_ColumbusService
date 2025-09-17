@@ -144,16 +144,39 @@ class LaunchSettingsFragment :
         }
     }
 
+    private data class AppPreferenceData(
+        val key: String,
+        val componentName: android.content.ComponentName,
+        val label: CharSequence,
+        val icon: Drawable,
+        val shortcuts: ArrayList<ShortcutInfo?>,
+    )
+
     private suspend fun populateRadioPreferences() {
         val applistCategory = applistCategory ?: return
 
-        val activityLists =
+        val appDataList =
             withContext(Dispatchers.IO) {
-                launcherApps.getActivityList(null, UserHandle.of(currentUser)).sortedBy {
-                    it.label.toString()
+                val activityLists =
+                    launcherApps.getActivityList(null, UserHandle.of(currentUser)).sortedBy {
+                        it.label.toString()
+                    }
+                val shortcutLists = queryForShortcuts()
+                val shortcutsByPackage = shortcutLists.groupBy { it?.getPackage() }
+
+                activityLists.map { activity ->
+                    val shortcuts =
+                        (shortcutsByPackage[activity.componentName.packageName] ?: emptyList())
+                            .let { ArrayList(it) }
+                    AppPreferenceData(
+                        key = activity.componentName.flattenToString(),
+                        componentName = activity.componentName,
+                        label = activity.label,
+                        icon = activity.getIcon(DisplayMetrics.DENSITY_DEVICE_STABLE),
+                        shortcuts = shortcuts,
+                    )
                 }
             }
-        val shortcutLists = withContext(Dispatchers.IO) { queryForShortcuts() }
 
         withContext(Dispatchers.Main) {
             val existingPreferences = mutableMapOf<String, RadioButtonPreference>()
@@ -166,52 +189,46 @@ class LaunchSettingsFragment :
 
             val preferencesToRemove = existingPreferences.keys.toMutableSet()
 
-            for (activity in activityLists) {
-                val key = activity.componentName.flattenToString()
-                preferencesToRemove.remove(key)
+            for (appData in appDataList) {
+                preferencesToRemove.remove(appData.key)
 
                 val radioPref =
-                    existingPreferences[key]
+                    existingPreferences[appData.key]
                         ?: RadioButtonPreference(_context).also {
                             it.apply {
-                                setKey(key)
+                                setKey(appData.key)
                                 setOnClickListener(this@LaunchSettingsFragment)
+                                isPersistent = false
                                 applistCategory.addPreference(it)
                             }
                         }
 
                 radioPref.apply {
-                    setTitle(activity.label)
-                    setIcon(activity.getIcon(DisplayMetrics.DENSITY_DEVICE_STABLE))
+                    setTitle(appData.label)
+                    setIcon(appData.icon)
 
-                    val shortcuts =
-                        shortcutLists.filter {
-                            it?.getPackage() == activity.componentName.packageName
-                        }
                     val args =
                         Bundle().apply {
-                            putParcelable(launchAppKey, activity.componentName)
-                            putParcelableArrayList(launchAppShortcutKey, ArrayList(shortcuts))
+                            putParcelable(launchAppKey, appData.componentName)
+                            putParcelableArrayList(launchAppShortcutKey, appData.shortcuts)
                         }
                     val onClickListener: View.OnClickListener? =
-                        if (shortcuts.isEmpty()) {
+                        if (appData.shortcuts.isEmpty()) {
                             null
                         } else {
-                            object : View.OnClickListener {
-                                override fun onClick(view: View) {
-                                    val fragment = LaunchAppShortcutSettingsFragment()
-                                    fragment.arguments = args
-                                    requireActivity()
-                                        .supportFragmentManager
-                                        .beginTransaction()
-                                        .replace(
-                                            com.android.settingslib.collapsingtoolbar.R.id
-                                                .content_frame,
-                                            fragment,
-                                        )
-                                        .addToBackStack(null)
-                                        .commit()
-                                }
+                            View.OnClickListener {
+                                val fragment = LaunchAppShortcutSettingsFragment()
+                                fragment.arguments = args
+                                requireActivity()
+                                    .supportFragmentManager
+                                    .beginTransaction()
+                                    .replace(
+                                        com.android.settingslib.collapsingtoolbar.R.id
+                                            .content_frame,
+                                        fragment,
+                                    )
+                                    .addToBackStack(null)
+                                    .commit()
                             }
                         }
                     setExtraWidgetOnClickListener(onClickListener)
@@ -227,24 +244,5 @@ class LaunchSettingsFragment :
 
             updateState()
         }
-    }
-
-    private fun makeRadioPreference(
-        category: PreferenceCategory,
-        key: String,
-        title: CharSequence?,
-        icon: Drawable?,
-        onClickListener: View.OnClickListener?,
-    ): RadioButtonPreference {
-        val radioPref = RadioButtonPreference(_context)
-        radioPref.apply {
-            setKey(key)
-            setTitle(title)
-            setIcon(icon)
-            setOnClickListener(this@LaunchSettingsFragment)
-            setExtraWidgetOnClickListener(onClickListener)
-            category.addPreference(this)
-        }
-        return radioPref
     }
 }

@@ -141,68 +141,89 @@ class LaunchAppShortcutSettingsFragment :
         }
     }
 
+    private data class ShortcutPreferenceData(
+        val key: String,
+        val title: CharSequence?,
+        val icon: Drawable?,
+    )
+
     private suspend fun populateRadioPreferences() {
         val shortcutlistCategory = shortcutlistCategory ?: return
         val application = application ?: return
         val shortcutInfos = shortcutInfos ?: return
 
-        shortcutlistCategory.removeAll()
-
-        val appIcon =
+        val shortcutDataList =
             withContext(Dispatchers.IO) {
-                launcherApps
-                    .getActivityList(application.packageName, UserHandle.of(currentUser))
-                    .firstOrNull { it.componentName == application }
-                    ?.getIcon(DisplayMetrics.DENSITY_DEVICE_STABLE) as? Drawable
-            }
+                val data = mutableListOf<ShortcutPreferenceData>()
 
-        val shortcutData =
-            withContext(Dispatchers.IO) {
-                shortcutInfos.filterNotNull().map {
-                    it.id to
-                        Pair(
-                            it.label,
-                            launcherApps.getShortcutIconDrawable(
-                                it,
-                                DisplayMetrics.DENSITY_DEVICE_STABLE,
-                            ),
+                val appIcon =
+                    launcherApps
+                        .getActivityList(application.packageName, UserHandle.of(currentUser))
+                        .firstOrNull { it.componentName == application }
+                        ?.getIcon(DisplayMetrics.DENSITY_DEVICE_STABLE)
+                data.add(
+                    ShortcutPreferenceData(
+                        key = application.flattenToString(),
+                        title = _context.getString(R.string.action_launch_name),
+                        icon = appIcon,
+                    )
+                )
+
+                shortcutInfos.filterNotNull().forEach { shortcutInfo ->
+                    data.add(
+                        ShortcutPreferenceData(
+                            key = shortcutInfo.id,
+                            title = shortcutInfo.label,
+                            icon =
+                                launcherApps.getShortcutIconDrawable(
+                                    shortcutInfo,
+                                    DisplayMetrics.DENSITY_DEVICE_STABLE,
+                                ),
                         )
+                    )
                 }
+                data
             }
 
         withContext(Dispatchers.Main) {
-            shortcutlistCategory.removeAll()
+            val existingPreferences = mutableMapOf<String, RadioButtonPreference>()
+            for (i in 0 until shortcutlistCategory.preferenceCount) {
+                val pref = shortcutlistCategory.getPreference(i)
+                if (pref is RadioButtonPreference) {
+                    existingPreferences[pref.key] = pref
+                }
+            }
 
-            makeRadioPreference(
-                shortcutlistCategory,
-                application.flattenToString(),
-                _context.getString(R.string.action_launch_name),
-                appIcon,
-            )
+            val preferencesToRemove = existingPreferences.keys.toMutableSet()
 
-            for ((shortcutId, data) in shortcutData) {
-                val (label, icon) = data
-                makeRadioPreference(shortcutlistCategory, shortcutId, label, icon)
+            for (data in shortcutDataList) {
+                preferencesToRemove.remove(data.key)
+
+                val radioPref =
+                    existingPreferences[data.key]
+                        ?: RadioButtonPreference(_context).also {
+                            it.apply {
+                                setKey(data.key)
+                                setOnClickListener(this@LaunchAppShortcutSettingsFragment)
+                                isPersistent = false
+                                shortcutlistCategory.addPreference(it)
+                            }
+                        }
+
+                radioPref.apply {
+                    setTitle(data.title)
+                    setIcon(data.icon)
+                }
+            }
+
+            preferencesToRemove.forEach { key ->
+                val pref = existingPreferences[key]
+                if (pref != null) {
+                    shortcutlistCategory.removePreference(pref)
+                }
             }
 
             updateState()
         }
-    }
-
-    private fun makeRadioPreference(
-        category: PreferenceCategory,
-        key: String,
-        title: CharSequence?,
-        icon: Drawable?,
-    ): RadioButtonPreference {
-        val radioPref = RadioButtonPreference(_context)
-        radioPref.apply {
-            setKey(key)
-            setTitle(title)
-            setIcon(icon)
-            setOnClickListener(this@LaunchAppShortcutSettingsFragment)
-            category.addPreference(this)
-        }
-        return radioPref
     }
 }
