@@ -23,12 +23,12 @@ import android.os.UserHandle
 import android.view.WindowManager.LayoutParams
 import org.protonaosp.columbus.KEY_SOURCE_QUICK_TAP
 import org.protonaosp.columbus.PackageStateManager
+import org.protonaosp.columbus.R
 import org.protonaosp.columbus.TAG
 import org.protonaosp.columbus.dlog
 import org.protonaosp.columbus.getDePrefs
 import org.protonaosp.columbus.getLaunchActionApp
 import org.protonaosp.columbus.getLaunchActionAppShortcut
-import org.protonaosp.columbus.R
 
 class LaunchAction(context: Context) :
     Action(context),

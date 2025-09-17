@@ -222,20 +222,11 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     private fun updateHapticIntensity() {
         val value = prefs.getHapticIntensity(this)
         vibDoubleTap =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                when (value) {
-                    0 -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
-                    1 -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
-                    2 -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
-                    else -> VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
-                }
-            } else {
-                when (value) {
-                    0 -> VibrationEffect.createOneShot(25, VibrationEffect.DEFAULT_AMPLITUDE)
-                    1 -> VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
-                    2 -> VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE)
-                    else -> VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE)
-                }
+            when (value) {
+                0 -> EFFECT_TICK
+                1 -> EFFECT_DOUBLE_CLICK
+                2 -> EFFECT_HEAVY_CLICK
+                else -> EFFECT_HEAVY_CLICK
             }
     }
 
@@ -350,5 +341,24 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .build()
+
+        private val EFFECT_TICK =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
+            } else {
+                VibrationEffect.createOneShot(25, VibrationEffect.DEFAULT_AMPLITUDE)
+            }
+        private val EFFECT_DOUBLE_CLICK =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
+            } else {
+                VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
+            }
+        private val EFFECT_HEAVY_CLICK =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
+            } else {
+                VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE)
+            }
     }
 }
