@@ -24,9 +24,6 @@ import org.protonaosp.columbus.dlog
 */
 
 class PocketDetection(context: Context, val handler: Handler) : Gate(context, handler, 2) {
-    companion object {
-        private const val TAG: String = "PocketDetection"
-    }
 
     private val powerManager: PowerManager =
         context.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -105,5 +102,9 @@ class PocketDetection(context: Context, val handler: Handler) : Gate(context, ha
         }
         stopListeningForPocket()
         context.unregisterReceiver(powerReceiver)
+    }
+
+    companion object {
+        private const val TAG: String = "PocketDetection"
     }
 }

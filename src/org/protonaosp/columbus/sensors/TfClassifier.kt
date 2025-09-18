@@ -21,10 +21,6 @@ import org.tensorflow.lite.Interpreter
 
 class TfClassifier(context: Context) {
 
-    companion object {
-        private const val TAG = "Columbus/TfClassifier"
-    }
-
     private var interpreter: Interpreter? = null
 
     init {
@@ -90,5 +86,9 @@ class TfClassifier(context: Context) {
         output.add(outputInner)
 
         return output
+    }
+
+    companion object {
+        private const val TAG = "Columbus/TfClassifier"
     }
 }
