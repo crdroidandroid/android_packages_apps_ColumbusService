@@ -269,7 +269,6 @@ class SettingsFragment :
     private fun updateHapticIntensity(initialize: Boolean = false) {
         prefHapticIntensity?.apply {
             if (initialize) {
-                setHapticFeedbackMode(SliderPreference.HAPTIC_FEEDBACK_MODE_ON_TICKS)
                 sliderIncrement = 1
                 setTickVisible(true)
                 setUpdatesContinuously(true)
