@@ -262,12 +262,15 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
 
         wakelock.acquire(2000L)
         try {
+            if (settingsGate.isBlocking() && settingsGate.handleGesture()) {
+                vibrator.vibrate(vibDoubleTap, sonicAudioAttr)
+                return
+            }
+
             if (!action.canRun()) return
 
             vibrator.vibrate(vibDoubleTap, sonicAudioAttr)
-            if (settingsGate.isBlocking() && settingsGate.handleGesture()) {
-                return
-            }
+
             action.run()
         } finally {
             if (wakelock.isHeld) {
