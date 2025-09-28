@@ -65,6 +65,8 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     }
 
     override fun onCreate() {
+        super.onCreate()
+
         val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         vibrator = vibratorManager.defaultVibrator
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
