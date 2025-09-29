@@ -100,7 +100,10 @@ class SettingsFragment :
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String?) {
         when (key) {
-            keyEnabled -> updateEnabled()
+            keyEnabled -> {
+                updateEnabled()
+                updateActionState()
+            }
             keyAction -> updateActionState()
             keySensitivity -> updateSensitivity()
             keyAllowScreenOff -> updateAllowScreenOff()

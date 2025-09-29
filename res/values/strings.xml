@@ -58,7 +58,9 @@
     <string name="setting_app_selection_help_text" product="default">Select an app to open when you double tap the back of your phone. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
     <string name="setting_app_selection_help_text" product="device">Select an app to open when you double tap the back of your device. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
     <string name="setting_app_selection_help_text" product="tablet">Select an app to open when you double tap the back of your tablet. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
+    <string name="setting_app_selection_help_text_disabled">To use this feature, you have to enable the Quick Tap first.</string>
     <string name="setting_app_shortcut_selection_help_text">Select shortcut to launch when this app opened by Quick Tap.</string>
+    <string name="setting_app_shortcut_selection_help_text_disabled">@string/setting_app_selection_help_text_disabled</string>
     <string name="radio_button_extra_widget_a11y_label"><xliff:g id="action">%1$s</xliff:g> settings</string>
     <string name="setting_action_launch_summary_no_selection">No app selected</string>
     <string name="setting_action_launch_summary_not_installed">App not installed</string>

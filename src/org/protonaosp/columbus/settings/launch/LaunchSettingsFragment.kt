@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceCategory
 import com.android.settingslib.widget.SelectorWithWidgetPreference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
+import com.android.settingslib.widget.TopIntroPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,6 +30,7 @@ import org.protonaosp.columbus.R
 import org.protonaosp.columbus.TAG
 import org.protonaosp.columbus.dlog
 import org.protonaosp.columbus.getDePrefs
+import org.protonaosp.columbus.getEnabled
 import org.protonaosp.columbus.getLaunchActionApp
 import org.protonaosp.columbus.setAction
 import org.protonaosp.columbus.setLaunchActionApp
@@ -38,6 +40,7 @@ import org.protonaosp.columbus.widget.RadioButtonPreference
 class LaunchSettingsFragment :
     SettingsBasePreferenceFragment(),
     SelectorWithWidgetPreference.OnClickListener,
+    SharedPreferences.OnSharedPreferenceChangeListener,
     PackageStateManager.PackageStateListener {
 
     private var currentUser: Int = -1
@@ -48,6 +51,17 @@ class LaunchSettingsFragment :
     private lateinit var launchAppKey: String
     private lateinit var launchAppShortcutKey: String
     private var applistCategory: PreferenceCategory? = null
+
+    // Keys
+    private val keyEnabled by lazy { _context.getString(R.string.pref_key_enabled) }
+    private val keyLaunchAppSummary by lazy {
+        _context.getString(R.string.pref_key_launch_app_summary)
+    }
+
+    // Prefs
+    private val prefLaunchAppSummary by lazy {
+        findPreference<TopIntroPreference>(keyLaunchAppSummary)
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.launch_settings, rootKey)
@@ -60,6 +74,7 @@ class LaunchSettingsFragment :
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
         prefs = _context.getDePrefs()
+        prefs.registerOnSharedPreferenceChangeListener(this)
         currentUser = ActivityManager.getCurrentUser()
         launcherApps = _context.getSystemService(LauncherApps::class.java)
         openAppValue = _context.getString(R.string.action_launch_value)
@@ -69,13 +84,22 @@ class LaunchSettingsFragment :
             preferenceScreen.findPreference<PreferenceCategory>(
                 getString(R.string.categ_key_app_list)
             )
+        updateIntro()
         lifecycleScope.launch { populateRadioPreferences() }
         PackageStateManager.registerListener(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        prefs.unregisterOnSharedPreferenceChangeListener(this)
         PackageStateManager.unregisterListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String?) {
+        if (key == keyEnabled) {
+            updateIntro()
+            updateState()
+        }
     }
 
     override fun onPackageAdded(packageName: String) {
@@ -128,6 +152,16 @@ class LaunchSettingsFragment :
         }
     }
 
+    private fun updateIntro() {
+        prefLaunchAppSummary?.setTitle(
+            if (prefs.getEnabled(_context)) {
+                R.string.setting_app_selection_help_text
+            } else {
+                R.string.setting_app_selection_help_text_disabled
+            }
+        )
+    }
+
     private fun updateState() {
         val applistCategory = applistCategory ?: return
 
@@ -141,6 +175,7 @@ class LaunchSettingsFragment :
             val pref = applistCategory.getPreference(i)
             if (pref is RadioButtonPreference) {
                 pref.setChecked(currentApp == pref.key)
+                pref.setEnabled(prefs.getEnabled(_context))
             }
         }
     }

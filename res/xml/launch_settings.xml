@@ -10,8 +10,7 @@
     android:title="@string/launch_settings_activity_title">
 
     <com.android.settingslib.widget.TopIntroPreference
-        android:key="@string/pref_key_launch_app_summary"
-        android:title="@string/setting_app_selection_help_text" />
+        android:key="@string/pref_key_launch_app_summary" />
 
     <PreferenceCategory
         android:key="@string/categ_key_app_list" />

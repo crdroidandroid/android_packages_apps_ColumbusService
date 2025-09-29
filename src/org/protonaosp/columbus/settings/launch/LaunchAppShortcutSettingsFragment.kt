@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceCategory
 import com.android.settingslib.widget.SelectorWithWidgetPreference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
+import com.android.settingslib.widget.TopIntroPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,6 +28,7 @@ import org.protonaosp.columbus.PREFS_NAME
 import org.protonaosp.columbus.PackageStateManager
 import org.protonaosp.columbus.R
 import org.protonaosp.columbus.getDePrefs
+import org.protonaosp.columbus.getEnabled
 import org.protonaosp.columbus.getLaunchActionAppShortcut
 import org.protonaosp.columbus.setAction
 import org.protonaosp.columbus.setLaunchActionApp
@@ -36,6 +38,7 @@ import org.protonaosp.columbus.widget.RadioButtonPreference
 class LaunchAppShortcutSettingsFragment :
     SettingsBasePreferenceFragment(),
     SelectorWithWidgetPreference.OnClickListener,
+    SharedPreferences.OnSharedPreferenceChangeListener,
     PackageStateManager.PackageStateListener {
 
     private var currentUser: Int = -1
@@ -46,6 +49,17 @@ class LaunchAppShortcutSettingsFragment :
     private var application: ComponentName? = null
     private var shortcutInfos: ArrayList<ShortcutInfo?>? = null
     private var shortcutlistCategory: PreferenceCategory? = null
+
+    // Keys
+    private val keyEnabled by lazy { _context.getString(R.string.pref_key_enabled) }
+    private val keyLaunchShortcutAppSummary by lazy {
+        _context.getString(R.string.pref_key_launch_shortcut_app_summary)
+    }
+
+    // Prefs
+    private val prefLaunchShortcutAppSummary by lazy {
+        findPreference<TopIntroPreference>(keyLaunchShortcutAppSummary)
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.launch_app_shortcut_settings, rootKey)
@@ -58,6 +72,7 @@ class LaunchAppShortcutSettingsFragment :
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
         prefs = _context.getDePrefs()
+        prefs.registerOnSharedPreferenceChangeListener(this)
         currentUser = ActivityManager.getCurrentUser()
         launcherApps = _context.getSystemService(LauncherApps::class.java)
         openAppValue = _context.getString(R.string.action_launch_value)
@@ -77,13 +92,22 @@ class LaunchAppShortcutSettingsFragment :
                 _context.getString(R.string.pref_key_launch_app_shortcut),
                 ShortcutInfo::class.java,
             )
+        updateIntro()
         lifecycleScope.launch { populateRadioPreferences() }
         PackageStateManager.registerListener(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        prefs.unregisterOnSharedPreferenceChangeListener(this)
         PackageStateManager.unregisterListener(this)
+    }
+
+    override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String?) {
+        if (key == keyEnabled) {
+            updateIntro()
+            updateState()
+        }
     }
 
     override fun onPackageRemoved(packageName: String) {
@@ -125,6 +149,16 @@ class LaunchAppShortcutSettingsFragment :
         updateState()
     }
 
+    private fun updateIntro() {
+        prefLaunchShortcutAppSummary?.setTitle(
+            if (prefs.getEnabled(_context)) {
+                R.string.setting_app_shortcut_selection_help_text
+            } else {
+                R.string.setting_app_shortcut_selection_help_text_disabled
+            }
+        )
+    }
+
     private fun updateState() {
         val shortcutlistCategory = shortcutlistCategory ?: return
 
@@ -138,6 +172,7 @@ class LaunchAppShortcutSettingsFragment :
             val pref = shortcutlistCategory.getPreference(i)
             if (pref is RadioButtonPreference) {
                 pref.setChecked(currentShortcut == pref.key)
+                pref.setEnabled(prefs.getEnabled(_context))
             }
         }
     }
