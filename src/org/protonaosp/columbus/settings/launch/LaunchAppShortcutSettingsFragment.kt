@@ -19,7 +19,6 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceCategory
 import com.android.settingslib.widget.SelectorWithWidgetPreference
-import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import com.android.settingslib.widget.TopIntroPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,10 +32,11 @@ import org.protonaosp.columbus.getLaunchActionAppShortcut
 import org.protonaosp.columbus.setAction
 import org.protonaosp.columbus.setLaunchActionApp
 import org.protonaosp.columbus.setLaunchActionAppShortcut
+import org.protonaosp.columbus.settings.ObservablePreferenceFragment
 import org.protonaosp.columbus.widget.RadioButtonPreference
 
 class LaunchAppShortcutSettingsFragment :
-    SettingsBasePreferenceFragment(),
+    ObservablePreferenceFragment(),
     SelectorWithWidgetPreference.OnClickListener,
     SharedPreferences.OnSharedPreferenceChangeListener,
     PackageStateManager.PackageStateListener {
@@ -110,7 +110,7 @@ class LaunchAppShortcutSettingsFragment :
         }
     }
 
-    override fun onPackageRemoved(packageName: String) {
+    override fun onPackageRemoved(packageName: String, uid: Int) {
         val pkgName: String = application?.packageName ?: return
 
         if (pkgName != packageName) {
@@ -126,7 +126,7 @@ class LaunchAppShortcutSettingsFragment :
         requireActivity().finish()
     }
 
-    override fun onPackageChanged(packageName: String) {
+    override fun onPackageChanged(packageName: String, uid: Int) {
         val pkgName: String = application?.packageName ?: return
 
         if (pkgName != packageName) {
@@ -171,8 +171,8 @@ class LaunchAppShortcutSettingsFragment :
         for (i in 0 until preferenceCount) {
             val pref = shortcutlistCategory.getPreference(i)
             if (pref is RadioButtonPreference) {
-                pref.setChecked(currentShortcut == pref.key)
                 pref.setEnabled(prefs.getEnabled(_context))
+                pref.setChecked(currentShortcut == pref.key)
             }
         }
     }

@@ -13,11 +13,11 @@ import android.content.IntentFilter
 object PackageStateManager {
 
     interface PackageStateListener {
-        fun onPackageAdded(packageName: String) {}
+        fun onPackageAdded(packageName: String, uid: Int) {}
 
-        fun onPackageRemoved(packageName: String) {}
+        fun onPackageRemoved(packageName: String, uid: Int) {}
 
-        fun onPackageChanged(packageName: String) {}
+        fun onPackageChanged(packageName: String, uid: Int) {}
     }
 
     private val listeners: HashSet<PackageStateListener> = HashSet()
@@ -41,15 +41,18 @@ object PackageStateManager {
             object : BroadcastReceiver() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     val packageName = intent?.data?.schemeSpecificPart ?: return
+                    val uid = intent?.getIntExtra(Intent.EXTRA_UID, 0) ?: return
 
                     val listenersCopy: HashSet<PackageStateListener>
                     synchronized(listenersLock) { listenersCopy = HashSet(listeners) }
 
                     listenersCopy.forEach { listener ->
                         when (intent.action) {
-                            Intent.ACTION_PACKAGE_ADDED -> listener.onPackageAdded(packageName)
-                            Intent.ACTION_PACKAGE_REMOVED -> listener.onPackageRemoved(packageName)
-                            Intent.ACTION_PACKAGE_CHANGED -> listener.onPackageChanged(packageName)
+                            Intent.ACTION_PACKAGE_ADDED -> listener.onPackageAdded(packageName, uid)
+                            Intent.ACTION_PACKAGE_REMOVED ->
+                                listener.onPackageRemoved(packageName, uid)
+                            Intent.ACTION_PACKAGE_CHANGED ->
+                                listener.onPackageChanged(packageName, uid)
                         }
                     }
                 }

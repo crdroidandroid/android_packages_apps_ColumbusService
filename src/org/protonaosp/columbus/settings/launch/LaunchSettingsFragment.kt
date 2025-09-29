@@ -19,7 +19,6 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceCategory
 import com.android.settingslib.widget.SelectorWithWidgetPreference
-import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import com.android.settingslib.widget.TopIntroPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,10 +34,12 @@ import org.protonaosp.columbus.getLaunchActionApp
 import org.protonaosp.columbus.setAction
 import org.protonaosp.columbus.setLaunchActionApp
 import org.protonaosp.columbus.setLaunchActionAppShortcut
+import org.protonaosp.columbus.settings.ObservablePreferenceFragment
+import org.protonaosp.columbus.utils.AppIconCacheManager
 import org.protonaosp.columbus.widget.RadioButtonPreference
 
 class LaunchSettingsFragment :
-    SettingsBasePreferenceFragment(),
+    ObservablePreferenceFragment(),
     SelectorWithWidgetPreference.OnClickListener,
     SharedPreferences.OnSharedPreferenceChangeListener,
     PackageStateManager.PackageStateListener {
@@ -102,11 +103,11 @@ class LaunchSettingsFragment :
         }
     }
 
-    override fun onPackageAdded(packageName: String) {
+    override fun onPackageAdded(packageName: String, uid: Int) {
         lifecycleScope.launch { populateRadioPreferences() }
     }
 
-    override fun onPackageRemoved(packageName: String) {
+    override fun onPackageRemoved(packageName: String, uid: Int) {
         val applistCategory = applistCategory ?: return
 
         val preferenceCount = applistCategory.preferenceCount
@@ -125,7 +126,7 @@ class LaunchSettingsFragment :
         }
     }
 
-    override fun onPackageChanged(packageName: String) {
+    override fun onPackageChanged(packageName: String, uid: Int) {
         lifecycleScope.launch { populateRadioPreferences() }
     }
 
@@ -174,8 +175,8 @@ class LaunchSettingsFragment :
         for (i in 0 until preferenceCount) {
             val pref = applistCategory.getPreference(i)
             if (pref is RadioButtonPreference) {
-                pref.setChecked(currentApp == pref.key)
                 pref.setEnabled(prefs.getEnabled(_context))
+                pref.setChecked(currentApp == pref.key)
             }
         }
     }
@@ -184,12 +185,14 @@ class LaunchSettingsFragment :
         val key: String,
         val componentName: android.content.ComponentName,
         val label: CharSequence,
-        val icon: Drawable,
+        val icon: Drawable?,
         val shortcuts: ArrayList<ShortcutInfo?>,
     )
 
-    private suspend fun populateRadioPreferences() {
+    private suspend fun populateRadioPreferences(iconRefreshPackageName: String? = null) {
         val applistCategory = applistCategory ?: return
+
+        val cacheManager: AppIconCacheManager = AppIconCacheManager.getInstance()
 
         val appDataList =
             withContext(Dispatchers.IO) {
@@ -201,14 +204,22 @@ class LaunchSettingsFragment :
                 val shortcutsByPackage = shortcutLists.groupBy { it?.getPackage() }
 
                 activityLists.map { activity ->
+                    val packageName = activity.componentName.packageName
+                    val uid = activity.applicationInfo.uid
+                    var packageIcon = cacheManager.get(packageName, uid)
+
+                    if (packageIcon == null || iconRefreshPackageName == packageName) {
+                        packageIcon = activity.getIcon(DisplayMetrics.DENSITY_DEVICE_STABLE)
+                        cacheManager.put(packageName, uid, packageIcon)
+                    }
+
                     val shortcuts =
-                        (shortcutsByPackage[activity.componentName.packageName] ?: emptyList())
-                            .let { ArrayList(it) }
+                        (shortcutsByPackage[packageName] ?: emptyList()).let { ArrayList(it) }
                     AppPreferenceData(
                         key = activity.componentName.flattenToString(),
                         componentName = activity.componentName,
                         label = activity.label,
-                        icon = activity.getIcon(DisplayMetrics.DENSITY_DEVICE_STABLE),
+                        icon = packageIcon,
                         shortcuts = shortcuts,
                     )
                 }

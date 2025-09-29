@@ -22,7 +22,6 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreferenceCompat
 import com.android.settingslib.widget.MainSwitchPreference
 import com.android.settingslib.widget.SelectorWithWidgetPreference
-import com.android.settingslib.widget.SettingsBasePreferenceFragment
 import com.android.settingslib.widget.SliderPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,7 +40,7 @@ import org.protonaosp.columbus.settings.launch.LaunchSettingsFragment
 import org.protonaosp.columbus.widget.RadioButtonPreference
 
 class SettingsFragment :
-    SettingsBasePreferenceFragment(),
+    ObservablePreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener,
     SelectorWithWidgetPreference.OnClickListener {
 
@@ -142,11 +141,7 @@ class SettingsFragment :
                 lifecycleScope.launch {
                     val summary =
                         withContext(Dispatchers.IO) { LAUNCH_ACTION_SUMMARY.getSummary(_context) }
-                    withContext(Dispatchers.Main) {
-                        if (isAdded) {
-                            action.summary = summary
-                        }
-                    }
+                    withContext(Dispatchers.Main) { action.summary = summary }
                 }
             }
         }
@@ -184,44 +179,65 @@ class SettingsFragment :
             }
 
         withContext(Dispatchers.Main) {
-            if (!isAdded) return@withContext
+            val existingPreferences = mutableMapOf<String, RadioButtonPreference>()
+            for (i in 0 until actionCategory.preferenceCount) {
+                val pref = actionCategory.getPreference(i)
+                if (pref is RadioButtonPreference) {
+                    existingPreferences[pref.key] = pref
+                }
+            }
 
-            actionCategory.removeAll()
-            actionPreferences.clear()
+            val preferencesToRemove = existingPreferences.keys.toMutableSet()
 
             prefInfoList.forEach { info ->
-                val onClickListener =
-                    if (info.isLaunch) {
-                        View.OnClickListener {
-                            requireActivity()
-                                .supportFragmentManager
-                                .beginTransaction()
-                                .replace(
-                                    com.android.settingslib.collapsingtoolbar.R.id.content_frame,
-                                    LaunchSettingsFragment(),
-                                )
-                                .addToBackStack(null)
-                                .commit()
+                preferencesToRemove.remove(info.key)
+
+                val radioPref =
+                    existingPreferences[info.key]
+                        ?: RadioButtonPreference(_context).also {
+                            it.key = info.key
+                            it.setOnClickListener(this@SettingsFragment)
+                            it.isPersistent = false
+                            actionCategory.addPreference(it)
+                            actionPreferences[info.key] = it
                         }
-                    } else {
-                        null
+
+                radioPref.apply {
+                    setTitle(info.title)
+                    setSummary(info.summary)
+
+                    if (info.isLaunch) {
+                        setContextualSummaryProvider(LAUNCH_ACTION_SUMMARY)
                     }
 
-                val pref =
-                    RadioButtonPreference(_context).apply {
-                        key = info.key
-                        title = info.title
-                        summary = info.summary
-                        if (info.isLaunch) {
-                            setContextualSummaryProvider(LAUNCH_ACTION_SUMMARY)
+                    val onClickListener: View.OnClickListener? =
+                        if (!info.isLaunch) {
+                            null
+                        } else {
+                            View.OnClickListener {
+                                requireActivity()
+                                    .supportFragmentManager
+                                    .beginTransaction()
+                                    .replace(
+                                        com.android.settingslib.collapsingtoolbar.R.id
+                                            .content_frame,
+                                        LaunchSettingsFragment(),
+                                    )
+                                    .addToBackStack(null)
+                                    .commit()
+                            }
                         }
-                        setOnClickListener(this@SettingsFragment)
-                        setExtraWidgetOnClickListener(onClickListener)
-                        isPersistent = false
-                    }
-                actionCategory.addPreference(pref)
-                actionPreferences[info.key] = pref
+                    setExtraWidgetOnClickListener(onClickListener)
+                }
             }
+
+            preferencesToRemove.forEach { key ->
+                val pref = existingPreferences[key]
+                if (pref != null) {
+                    actionCategory.removePreference(pref)
+                }
+            }
+
             updateActionState()
         }
     }

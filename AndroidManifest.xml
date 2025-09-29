@@ -52,12 +52,16 @@
     <uses-permission android:name="com.google.android.columbus.permission.CONFIGURE_COLUMBUS_GESTURE"/>
 
     <application
+        android:name=".ColumbusApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:allowBackup="false"
         android:supportsRtl="true"
         android:persistent="true"
         android:enableOnBackInvokedCallback="true"
+        android:hardwareAccelerated="true"
+        android:defaultToDeviceProtectedStorage="true"
+        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:directBootAware="true">
 
         <!-- Core (singleton) -->

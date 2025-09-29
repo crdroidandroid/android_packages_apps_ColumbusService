@@ -53,21 +53,21 @@ class Settings(context: Context, handler: Handler) : Gate(context, handler, 2) {
             }
         }
 
-    init {
-        (context.applicationContext as Application).registerActivityLifecycleCallbacks(
-            activityLifecycleCallbacks
-        )
-    }
-
     private fun updateBlocking() {
         setBlocking(settingsActivityCount > 0)
     }
 
     override fun onActivate() {
+        (context.applicationContext as Application).registerActivityLifecycleCallbacks(
+            activityLifecycleCallbacks
+        )
         updateBlocking()
     }
 
     override fun onDeactivate() {
+        (context.applicationContext as Application).unregisterActivityLifecycleCallbacks(
+            activityLifecycleCallbacks
+        )
         setBlocking(false)
     }
 

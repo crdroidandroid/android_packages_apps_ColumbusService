@@ -118,15 +118,15 @@ class LaunchAction(context: Context) :
         }
     }
 
-    override fun onPackageAdded(packageName: String) {
+    override fun onPackageAdded(packageName: String, uid: Int) {
         val shortcuts = queryForShortcuts(packageName)
         if (shortcuts.isNotEmpty()) {
             shortcutMap[packageName] = shortcuts
         }
-        onPackageChanged(packageName)
+        onPackageChanged(packageName, uid)
     }
 
-    override fun onPackageRemoved(packageName: String) {
+    override fun onPackageRemoved(packageName: String, uid: Int) {
         shortcutMap.remove(packageName)
 
         val app: String = prefs.getLaunchActionApp(context) ?: return
@@ -137,7 +137,7 @@ class LaunchAction(context: Context) :
         }
     }
 
-    override fun onPackageChanged(packageName: String) {
+    override fun onPackageChanged(packageName: String, uid: Int) {
         val shortcuts = queryForShortcuts(packageName)
         if (shortcuts.isNotEmpty()) {
             shortcutMap[packageName] = shortcuts
