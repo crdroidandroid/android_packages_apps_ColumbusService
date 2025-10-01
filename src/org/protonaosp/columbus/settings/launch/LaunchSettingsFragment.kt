@@ -70,7 +70,7 @@ class LaunchSettingsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().setTitle(R.string.launch_settings_activity_title)
+
         preferenceManager.setStorageDeviceProtected()
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
@@ -88,6 +88,11 @@ class LaunchSettingsFragment :
         updateIntro()
         lifecycleScope.launch { populateRadioPreferences() }
         PackageStateManager.registerListener(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().setTitle(R.string.launch_settings_activity_title)
     }
 
     override fun onDestroyView() {
@@ -171,11 +176,12 @@ class LaunchSettingsFragment :
             return
         }
 
+        val enabled = prefs.getEnabled(_context)
         var currentApp = prefs.getLaunchActionApp(_context)
         for (i in 0 until preferenceCount) {
             val pref = applistCategory.getPreference(i)
             if (pref is RadioButtonPreference) {
-                pref.setEnabled(prefs.getEnabled(_context))
+                pref.setEnabled(enabled)
                 pref.setChecked(currentApp == pref.key)
             }
         }

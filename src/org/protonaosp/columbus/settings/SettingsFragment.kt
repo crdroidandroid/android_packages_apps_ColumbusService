@@ -8,14 +8,17 @@
 
 package org.protonaosp.columbus.settings
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.LauncherApps
 import android.media.AudioAttributes
 import android.os.Bundle
 import android.os.UserHandle
 import android.os.VibrationEffect
 import android.os.VibratorManager
 import android.provider.Settings
+import android.util.DisplayMetrics
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceCategory
@@ -29,6 +32,8 @@ import kotlinx.coroutines.withContext
 import org.protonaosp.columbus.LAUNCH_ACTION_SUMMARY
 import org.protonaosp.columbus.PREFS_NAME
 import org.protonaosp.columbus.R
+import org.protonaosp.columbus.TAG
+import org.protonaosp.columbus.dlog
 import org.protonaosp.columbus.getAction
 import org.protonaosp.columbus.getAllowScreenOff
 import org.protonaosp.columbus.getDePrefs
@@ -37,6 +42,7 @@ import org.protonaosp.columbus.getHapticIntensity
 import org.protonaosp.columbus.getSensitivity
 import org.protonaosp.columbus.setAction
 import org.protonaosp.columbus.settings.launch.LaunchSettingsFragment
+import org.protonaosp.columbus.utils.AppIconCacheManager
 import org.protonaosp.columbus.widget.RadioButtonPreference
 
 class SettingsFragment :
@@ -44,6 +50,7 @@ class SettingsFragment :
     SharedPreferences.OnSharedPreferenceChangeListener,
     SelectorWithWidgetPreference.OnClickListener {
 
+    private var currentUser: Int = -1
     private lateinit var prefs: SharedPreferences
     private val _context by lazy { requireContext() }
 
@@ -51,6 +58,9 @@ class SettingsFragment :
         (_context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager)
             .defaultVibrator
     }
+    private lateinit var launcherApps: LauncherApps
+
+    private var actionCategory: PreferenceCategory? = null
 
     // Keys
     private val keyEnabled by lazy { _context.getString(R.string.pref_key_enabled) }
@@ -77,12 +87,20 @@ class SettingsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().setTitle(R.string.settings_entry_title)
+
+        currentUser = ActivityManager.getCurrentUser()
+        launcherApps = _context.getSystemService(LauncherApps::class.java)
+        lifecycleScope.launch { preloadAppIcons() }
+
         preferenceManager.setStorageDeviceProtected()
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
         prefs = _context.getDePrefs()
         prefs.registerOnSharedPreferenceChangeListener(this)
+        actionCategory =
+            preferenceScreen.findPreference<PreferenceCategory>(
+                getString(R.string.categ_key_action)
+            )
         lifecycleScope.launch { populateRadioPreferences() }
 
         updateEnabled()
@@ -91,9 +109,13 @@ class SettingsFragment :
         updateHapticIntensity(true)
     }
 
+    override fun onResume() {
+        super.onResume()
+        requireActivity().setTitle(R.string.settings_entry_title)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        actionPreferences.clear()
         prefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
@@ -124,24 +146,47 @@ class SettingsFragment :
     }
 
     private fun updateActionState() {
-        if (actionPreferences.isEmpty()) {
+        val actionCategory = actionCategory ?: return
+
+        val preferenceCount = actionCategory.preferenceCount
+        if (preferenceCount == 0) {
             return
         }
+
+        val enabled = prefs.getEnabled(_context)
         var currentAction = prefs.getAction(_context)
-        if (!actionPreferences.containsKey(currentAction)) {
-            currentAction = _context.getString(R.string.default_action)
-        }
-        for (action in actionPreferences.values) {
-            val isActionChecked = action.key == currentAction
-            if (action.isChecked() != isActionChecked) {
-                action.setChecked(isActionChecked)
+        for (i in 0 until preferenceCount) {
+            val pref = actionCategory.getPreference(i)
+            if (pref !is RadioButtonPreference) {
+                continue
             }
-            action.setEnabled(prefs.getEnabled(_context))
-            if (action.key == _context.getString(R.string.action_launch_value)) {
+
+            pref.setEnabled(enabled)
+            pref.setChecked(currentAction == pref.key)
+            if (pref.key == _context.getString(R.string.action_launch_value)) {
                 lifecycleScope.launch {
                     val summary =
                         withContext(Dispatchers.IO) { LAUNCH_ACTION_SUMMARY.getSummary(_context) }
-                    withContext(Dispatchers.Main) { action.summary = summary }
+                    withContext(Dispatchers.Main) { pref.summary = summary }
+                }
+            }
+        }
+    }
+
+    private suspend fun preloadAppIcons() {
+        withContext(Dispatchers.IO) {
+            val cacheManager = AppIconCacheManager.getInstance()
+            val activityLists = launcherApps.getActivityList(null, UserHandle.of(currentUser))
+
+            activityLists.forEach { activity ->
+                val packageName = activity.componentName.packageName
+                val uid = activity.applicationInfo.uid
+
+                try {
+                    val icon = activity.getIcon(DisplayMetrics.DENSITY_DEVICE_STABLE)
+                    cacheManager.put(packageName, uid, icon)
+                } catch (e: Exception) {
+                    dlog(TAG, "Failed to preload icon for $packageName. ${e.message}")
                 }
             }
         }
@@ -155,10 +200,7 @@ class SettingsFragment :
     )
 
     private suspend fun populateRadioPreferences() {
-        val actionCategory =
-            preferenceScreen.findPreference<PreferenceCategory>(
-                getString(R.string.categ_key_action)
-            ) ?: return
+        val actionCategory = actionCategory ?: return
 
         val prefInfoList =
             withContext(Dispatchers.IO) {

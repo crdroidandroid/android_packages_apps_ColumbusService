@@ -67,7 +67,7 @@ class LaunchAppShortcutSettingsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().setTitle(R.string.launch_settings_activity_title)
+
         preferenceManager.setStorageDeviceProtected()
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
@@ -97,6 +97,11 @@ class LaunchAppShortcutSettingsFragment :
         PackageStateManager.registerListener(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        requireActivity().setTitle(R.string.launch_settings_activity_title)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         prefs.unregisterOnSharedPreferenceChangeListener(this)
@@ -123,7 +128,7 @@ class LaunchAppShortcutSettingsFragment :
                 Toast.LENGTH_SHORT,
             )
             .show()
-        requireActivity().finish()
+        requireActivity().getSupportFragmentManager().popBackStack()
     }
 
     override fun onPackageChanged(packageName: String, uid: Int) {
@@ -167,11 +172,12 @@ class LaunchAppShortcutSettingsFragment :
             return
         }
 
+        val enabled = prefs.getEnabled(_context)
         var currentShortcut = prefs.getLaunchActionAppShortcut(_context)
         for (i in 0 until preferenceCount) {
             val pref = shortcutlistCategory.getPreference(i)
             if (pref is RadioButtonPreference) {
-                pref.setEnabled(prefs.getEnabled(_context))
+                pref.setEnabled(enabled)
                 pref.setChecked(currentShortcut == pref.key)
             }
         }
