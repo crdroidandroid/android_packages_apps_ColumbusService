@@ -96,7 +96,6 @@
             android:label="@string/settings_entry_title"
             android:description="@string/settings_entry_title"
             android:theme="@style/Theme.SubSettingsBase.Expressive"
-            android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
