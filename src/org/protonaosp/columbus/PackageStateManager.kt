@@ -33,6 +33,7 @@ object PackageStateManager {
     }
 
     fun onDestroy() {
+        listeners.clear()
         unregisterReceiver()
     }
 
