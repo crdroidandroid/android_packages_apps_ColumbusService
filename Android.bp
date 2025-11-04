@@ -20,9 +20,7 @@ android_app {
     system_ext_specific: true,
     certificate: "platform",
     privileged: true,
-    required: [
-        "privapp_whitelist_org.protonaosp.columbus",
-    ],
+    privapp_allowlist: "privapp_whitelist_org.protonaosp.columbus.xml",
     static_libs: [
         "kotlin-stdlib",
         "androidx.preference_preference",
@@ -49,12 +47,4 @@ android_app {
         "-0 .tflite",
     ],
     kotlincflags: ["-Xjvm-default=all"],
-}
-
-prebuilt_etc {
-    name: "privapp_whitelist_org.protonaosp.columbus",
-    system_ext_specific: true,
-    relative_install_path: "permissions",
-    src: "privapp_whitelist_org.protonaosp.columbus.xml",
-    filename_from_src: true,
 }
