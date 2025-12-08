@@ -52,6 +52,8 @@ enum MessageType {
     // Set new sensitivity without restarting gesture
     SENSITIVITY_UPDATE = 200;
     GESTURE_DETECTED = 300;
+    // Logging
+    NANOAPP_EVENTS = 500;
     GATE_START = 1;
     GATE_STOP = 2;
     HIGH_IMU_ODR_START = 3;

@@ -50,7 +50,7 @@ class CHRESensor(val context: Context, var sensitivity: Float, val handler: Hand
                 }
 
                 // Fallback for other unexpected messages
-                else -> Log.w(TAG, "Received unknown message of type ${msg.messageType}: $msg")
+                else -> Log.d(TAG, "Received unknown message of type ${msg.messageType}: $msg")
             }
         }
 
