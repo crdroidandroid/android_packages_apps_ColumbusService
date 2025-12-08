@@ -29,8 +29,8 @@ class SilenceCallAction(context: Context) : Action(context) {
         }
 
     init {
-        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
-        telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        telecomManager = context.getSystemService(Context.TELECOM_SERVICE) as? TelecomManager
+        telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
         telephonyManager?.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE)
     }
 

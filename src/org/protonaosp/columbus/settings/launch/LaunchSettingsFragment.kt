@@ -46,11 +46,11 @@ class LaunchSettingsFragment :
 
     private var currentUser: Int = -1
     private val _context by lazy { requireContext() }
-    private lateinit var prefs: SharedPreferences
-    private lateinit var launcherApps: LauncherApps
-    private lateinit var openAppValue: String
-    private lateinit var launchAppKey: String
-    private lateinit var launchAppShortcutKey: String
+    private var prefs: SharedPreferences? = null
+    private var launcherApps: LauncherApps? = null
+    private var openAppValue: String? = null
+    private var launchAppKey: String? = null
+    private var launchAppShortcutKey: String? = null
     private var applistCategory: PreferenceCategory? = null
 
     // Keys
@@ -75,7 +75,7 @@ class LaunchSettingsFragment :
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
         prefs = _context.getDePrefs()
-        prefs.registerOnSharedPreferenceChangeListener(this)
+        prefs?.registerOnSharedPreferenceChangeListener(this)
         currentUser = ActivityManager.getCurrentUser()
         launcherApps = _context.getSystemService(LauncherApps::class.java)
         openAppValue = _context.getString(R.string.action_launch_value)
@@ -97,7 +97,7 @@ class LaunchSettingsFragment :
 
     override fun onDestroyView() {
         super.onDestroyView()
-        prefs.unregisterOnSharedPreferenceChangeListener(this)
+        prefs?.unregisterOnSharedPreferenceChangeListener(this)
         PackageStateManager.unregisterListener(this)
     }
 
@@ -137,17 +137,21 @@ class LaunchSettingsFragment :
 
     override fun onRadioButtonClicked(emiter: SelectorWithWidgetPreference) {
         if (emiter !is RadioButtonPreference) return
+        val openAppValue = openAppValue ?: return
 
         val key = emiter.key
 
-        prefs.setAction(_context, openAppValue)
-        prefs.setLaunchActionApp(_context, key)
-        prefs.setLaunchActionAppShortcut(_context, key)
+        prefs?.apply {
+            setAction(_context, openAppValue)
+            setLaunchActionApp(_context, key)
+            setLaunchActionAppShortcut(_context, key)
+        }
 
         updateState()
     }
 
     private fun queryForShortcuts(): ArrayList<ShortcutInfo?> {
+        val launcherApps = launcherApps ?: return arrayListOf<ShortcutInfo?>()
         val query = LauncherApps.ShortcutQuery()
         query.setQueryFlags(FLAG_MATCH_DYNAMIC or FLAG_MATCH_MANIFEST)
         return try {
@@ -160,7 +164,7 @@ class LaunchSettingsFragment :
 
     private fun updateIntro() {
         prefLaunchAppSummary?.setTitle(
-            if (prefs.getEnabled(_context)) {
+            if (prefs?.getEnabled(_context) == true) {
                 R.string.setting_app_selection_help_text
             } else {
                 R.string.setting_app_selection_help_text_disabled
@@ -175,6 +179,8 @@ class LaunchSettingsFragment :
         if (preferenceCount == 0) {
             return
         }
+
+        val prefs = prefs ?: return
 
         val enabled = prefs.getEnabled(_context)
         var currentApp = prefs.getLaunchActionApp(_context)
@@ -197,6 +203,9 @@ class LaunchSettingsFragment :
 
     private suspend fun populateRadioPreferences(iconRefreshPackageName: String? = null) {
         val applistCategory = applistCategory ?: return
+        val launcherApps = launcherApps ?: return
+        val launchAppKey = launchAppKey ?: return
+        val launchAppShortcutKey = launchAppShortcutKey ?: return
 
         val cacheManager: AppIconCacheManager = AppIconCacheManager.getInstance()
 

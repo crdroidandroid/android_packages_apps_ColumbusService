@@ -39,8 +39,8 @@ class LaunchAction(context: Context) :
 
     override fun canRunWhenScreenOff() = false
 
-    private val launcherApps: LauncherApps
-    private val shortcutService: IShortcutService
+    private val launcherApps: LauncherApps?
+    private val shortcutService: IShortcutService?
     private val prefs: SharedPreferences
     private var currentUser: Int = -1
     private var isShortcutValid: Boolean = true
@@ -85,12 +85,12 @@ class LaunchAction(context: Context) :
         return try {
             val rawlist =
                 shortcutService
-                    .getShortcuts(
+                    ?.getShortcuts(
                         packageName,
                         FLAG_MATCH_DYNAMIC or FLAG_MATCH_MANIFEST,
                         currentUser,
                     )
-                    .getList() as? java.util.List<ShortcutInfo>
+                    ?.getList() as? java.util.List<ShortcutInfo>
             rawlist?.toList() ?: emptyList()
         } catch (e: Exception) {
             dlog(TAG, "Failed to query shortcuts. ${e}")
@@ -199,8 +199,9 @@ class LaunchAction(context: Context) :
 
         if (app == shortcut) {
             val intent =
-                launcherApps.getMainActivityLaunchIntent(component, null, currentUserHandle)?.intent
-                    ?: return
+                launcherApps
+                    ?.getMainActivityLaunchIntent(component, null, currentUserHandle)
+                    ?.intent ?: return
             intent.putExtra(KEY_SOURCE_QUICK_TAP, true)
             try {
                 context.startActivityAsUser(intent, options, currentUserHandle)

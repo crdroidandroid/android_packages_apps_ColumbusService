@@ -11,9 +11,10 @@ import android.os.PowerManager
 import android.os.SystemClock
 
 class ScreenAction(context: Context) : Action(context) {
-    val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+    val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
 
     override fun run() {
+        if (pm == null) return
         if (pm.isInteractive) {
             pm.goToSleep(
                 SystemClock.uptimeMillis(),

@@ -10,11 +10,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
-import android.os.PowerManager
 
 class PowerState(context: Context, handler: Handler) : TransientGate(context, handler) {
-    private val powerManager: PowerManager =
-        context.getSystemService(Context.POWER_SERVICE) as PowerManager
     private val powerReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {

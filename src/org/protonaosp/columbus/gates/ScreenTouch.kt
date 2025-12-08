@@ -22,8 +22,7 @@ import org.protonaosp.columbus.TAG
 
 class ScreenTouch(context: Context, val handler: Handler) : Gate(context, handler, 2) {
     private val clearBlocking = Runnable { setBlocking(false) }
-    private val powerManager: PowerManager =
-        context.getSystemService(Context.POWER_SERVICE) as PowerManager
+    private val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
     private val powerReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -82,7 +81,7 @@ class ScreenTouch(context: Context, val handler: Handler) : Gate(context, handle
     }
 
     fun refreshStatus() {
-        if (powerManager.isInteractive) {
+        if (pm?.isInteractive == true) {
             startListeningForTouch()
         } else {
             stopListeningForTouch()

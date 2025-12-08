@@ -43,9 +43,9 @@ class LaunchAppShortcutSettingsFragment :
 
     private var currentUser: Int = -1
     private val _context by lazy { requireContext() }
-    private lateinit var prefs: SharedPreferences
-    private lateinit var launcherApps: LauncherApps
-    private lateinit var openAppValue: String
+    private var prefs: SharedPreferences? = null
+    private var launcherApps: LauncherApps? = null
+    private var openAppValue: String? = null
     private var application: ComponentName? = null
     private var shortcutInfos: ArrayList<ShortcutInfo?>? = null
     private var shortcutlistCategory: PreferenceCategory? = null
@@ -72,7 +72,7 @@ class LaunchAppShortcutSettingsFragment :
         preferenceManager.sharedPreferencesName = PREFS_NAME
 
         prefs = _context.getDePrefs()
-        prefs.registerOnSharedPreferenceChangeListener(this)
+        prefs?.registerOnSharedPreferenceChangeListener(this)
         currentUser = ActivityManager.getCurrentUser()
         launcherApps = _context.getSystemService(LauncherApps::class.java)
         openAppValue = _context.getString(R.string.action_launch_value)
@@ -104,7 +104,7 @@ class LaunchAppShortcutSettingsFragment :
 
     override fun onDestroyView() {
         super.onDestroyView()
-        prefs.unregisterOnSharedPreferenceChangeListener(this)
+        prefs?.unregisterOnSharedPreferenceChangeListener(this)
         PackageStateManager.unregisterListener(this)
     }
 
@@ -144,19 +144,22 @@ class LaunchAppShortcutSettingsFragment :
     override fun onRadioButtonClicked(emiter: SelectorWithWidgetPreference) {
         if (emiter !is RadioButtonPreference) return
         val application = application ?: return
+        val openAppValue = openAppValue ?: return
 
         val key = emiter.key
 
-        prefs.setAction(_context, openAppValue)
-        prefs.setLaunchActionApp(_context, application.flattenToString())
-        prefs.setLaunchActionAppShortcut(_context, key)
+        prefs?.apply {
+            setAction(_context, openAppValue)
+            setLaunchActionApp(_context, application.flattenToString())
+            setLaunchActionAppShortcut(_context, key)
+        }
 
         updateState()
     }
 
     private fun updateIntro() {
         prefLaunchShortcutAppSummary?.setTitle(
-            if (prefs.getEnabled(_context)) {
+            if (prefs?.getEnabled(_context) == true) {
                 R.string.setting_app_shortcut_selection_help_text
             } else {
                 R.string.setting_app_shortcut_selection_help_text_disabled
@@ -171,6 +174,8 @@ class LaunchAppShortcutSettingsFragment :
         if (preferenceCount == 0) {
             return
         }
+
+        val prefs = prefs ?: return
 
         val enabled = prefs.getEnabled(_context)
         var currentShortcut = prefs.getLaunchActionAppShortcut(_context)
@@ -193,6 +198,7 @@ class LaunchAppShortcutSettingsFragment :
         val shortcutlistCategory = shortcutlistCategory ?: return
         val application = application ?: return
         val shortcutInfos = shortcutInfos ?: return
+        val launcherApps = launcherApps ?: return
 
         val shortcutDataList =
             withContext(Dispatchers.IO) {

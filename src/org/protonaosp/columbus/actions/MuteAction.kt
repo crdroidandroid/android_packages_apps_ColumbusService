@@ -11,14 +11,17 @@ import android.media.AudioManager
 import android.os.UserHandle
 import android.provider.Settings
 import android.widget.Toast
+import com.android.internal.R as InternalR
 
 class MuteAction(context: Context) : Action(context) {
-    val service = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    val service = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
 
     override fun canRun() =
-        context.resources.getBoolean(com.android.internal.R.bool.config_volumeHushGestureEnabled)
+        service != null &&
+            context.resources.getBoolean(InternalR.bool.config_volumeHushGestureEnabled)
 
     override fun run() {
+        if (service == null) return
         // We can't call AudioService#silenceRingerModeInternal from here, so this is a partial copy
         // of it
         var silenceRingerSetting =

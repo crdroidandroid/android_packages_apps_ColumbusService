@@ -16,9 +16,9 @@ import com.android.internal.util.ScreenshotHelper
 class ScreenshotAction(context: Context) : Action(context) {
     val helper = ScreenshotHelper(context)
     private val handler = Handler.createAsync(Looper.getMainLooper())
-    val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+    val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
 
-    override fun canRun() = pm.isInteractive
+    override fun canRun() = pm?.isInteractive == true
 
     override fun canRunWhenScreenOff() = false
 

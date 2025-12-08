@@ -21,18 +21,18 @@ private const val NANOAPP_ID = 0x476f6f676c001019L
 
 class CHRESensor(val context: Context, var sensitivity: Float, val handler: Handler) :
     ColumbusSensor() {
-    private val contextHubManager: ContextHubManager
-    private val callback: CHRECallback
+    private var contextHubManager: ContextHubManager? = null
+    private var callback: CHRECallback? = null
     private var isListening: Boolean = false
 
     init {
         contextHubManager =
-            context.getSystemService(Context.CONTEXTHUB_SERVICE) as ContextHubManager
+            context.getSystemService(Context.CONTEXTHUB_SERVICE) as? ContextHubManager
         callback = CHRECallback()
     }
 
     inner class CHRECallback : ContextHubClientCallback() {
-        private lateinit var client: ContextHubClient
+        private var client: ContextHubClient? = null
 
         override fun onMessageFromNanoApp(client: ContextHubClient, msg: NanoAppMessage) {
             // Ignore other nanoapps
@@ -62,6 +62,8 @@ class CHRESensor(val context: Context, var sensitivity: Float, val handler: Hand
 
         fun setListening(listening: Boolean) {
             if (listening) {
+                val contextHubManager = contextHubManager ?: return
+                val callback = callback ?: return
                 client = contextHubManager.createClient(contextHubManager.contextHubs[0], callback)
 
                 val msg = ContextHubMessages.RecognizerStart()
@@ -84,7 +86,7 @@ class CHRESensor(val context: Context, var sensitivity: Float, val handler: Hand
 
         private fun sendNanoappMsg(msgType: Int, bytes: ByteArray) {
             val message = NanoAppMessage.createMessageToNanoApp(NANOAPP_ID, msgType, bytes)
-            val ret = client.sendMessageToNanoApp(message)
+            val ret = client?.sendMessageToNanoApp(message) ?: return
             if (ret != 0) {
                 Log.e(TAG, "Failed to send message of type $msgType to nanoapp: $ret")
             }
@@ -108,15 +110,15 @@ class CHRESensor(val context: Context, var sensitivity: Float, val handler: Hand
     }
 
     override fun startListening() {
-        callback.setListening(true)
+        callback?.setListening(true)
     }
 
     override fun stopListening() {
-        callback.setListening(false)
+        callback?.setListening(false)
     }
 
     override fun updateSensitivity(sensitivity: Float) {
         this.sensitivity = sensitivity
-        callback.updateSensitivity()
+        callback?.updateSensitivity()
     }
 }

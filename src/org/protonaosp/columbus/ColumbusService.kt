@@ -31,15 +31,15 @@ import org.protonaosp.columbus.sensors.useApSensor
 
 class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeListener {
     // Services
-    private lateinit var vibrator: Vibrator
-    private lateinit var prefs: SharedPreferences
-    private lateinit var action: Action
-    private lateinit var vibDoubleTap: VibrationEffect
-    private lateinit var sensor: ColumbusSensor
-    private lateinit var controller: ColumbusController
-    private lateinit var handler: Handler
-    private lateinit var wakelock: PowerManager.WakeLock
-    private lateinit var settingsGate: Settings
+    private var vibrator: Vibrator? = null
+    private var prefs: SharedPreferences? = null
+    private var action: Action? = null
+    private var vibDoubleTap: VibrationEffect? = null
+    private var sensor: ColumbusSensor? = null
+    private var controller: ColumbusController? = null
+    private var handler: Handler? = null
+    private var wakelock: PowerManager.WakeLock? = null
+    private var settingsGate: Settings? = null
     private var gates = setOf<Gate>()
     private val binder = Binder()
 
@@ -67,15 +67,16 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     override fun onCreate() {
         super.onCreate()
 
-        val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-        vibrator = vibratorManager.defaultVibrator
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakelock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG)
+        val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+        vibrator = vibratorManager?.defaultVibrator
+        val powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
+        wakelock = powerManager?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG)
         handler = Handler.createAsync(Looper.getMainLooper())
         prefs = getDePrefs()
 
         dlog(TAG, "Initializing Quick Tap gesture")
 
+        val handler = handler ?: return
         if (useApSensor(this)) {
             dlog(TAG, "Initializing AP Sensor")
             sensor = APSensor(this, sensitivity, handler)
@@ -83,8 +84,10 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
             dlog(TAG, "Initializing CHRE Sensor")
             sensor = CHRESensor(this, sensitivity, handler)
         }
+        val sensor = sensor ?: return
+
         controller = ColumbusController(this, sensor, handler)
-        controller.setGestureListener(columbusControllerListener)
+        controller?.setGestureListener(columbusControllerListener)
         settingsGate = Settings(this, handler)
         gates =
             setOf(
@@ -103,12 +106,12 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         PackageStateManager.onCreate(this)
 
         // Only register for changes after initial pref updates
-        prefs.registerOnSharedPreferenceChangeListener(this)
+        prefs?.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {
         // Cleanup preferences listener
-        prefs.unregisterOnSharedPreferenceChangeListener(this)
+        prefs?.unregisterOnSharedPreferenceChangeListener(this)
 
         PackageStateManager.onDestroy()
 
@@ -123,19 +126,18 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         gates = emptySet()
 
         // Stop sensor and controller
-        controller.stopListening()
-        sensor.stopListening()
+        controller?.stopListening()
+        sensor?.stopListening()
 
         // Release wakelock if held
-        if (wakelock.isHeld) {
-            wakelock.release()
+        if (wakelock?.isHeld == true) {
+            wakelock?.release()
         }
 
-        // Cleanup current action
-        action.destroy()
+        // Cleanup action
+        action?.destroy()
+        action = null
 
-        // Clear references
-        action = DummyAction(this)
         super.onDestroy()
     }
 
@@ -159,6 +161,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     }
 
     private fun updateSensitivity() {
+        val prefs = prefs ?: return
         val value = prefs.getSensitivity(this)
         sensitivity =
             if (value <= 5) {
@@ -170,13 +173,13 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     }
 
     private fun updateAction() {
+        val prefs = prefs ?: return
         val key = prefs.getAction(this)
         dlog(TAG, "Setting action to $key")
-        if (::action.isInitialized) {
-            action.destroy()
-        }
+        action?.destroy()
         action = createAction(key)
 
+        val action = action ?: return
         // For settings
         prefs
             .edit()
@@ -188,7 +191,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     }
 
     private fun updateEnabled() {
-        enabled = prefs.getEnabled(this)
+        enabled = prefs?.getEnabled(this) ?: return
         if (enabled) {
             dlog(TAG, "Enabling gesture")
             activateGates()
@@ -205,10 +208,12 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     }
 
     private fun updateScreenCallback() {
-        val allowScreenOff = prefs.getAllowScreenOff(this)
+        val allowScreenOff = prefs?.getAllowScreenOff(this) ?: return
 
         // Listen if either condition *can't* run when screen is off
-        if ((!allowScreenOff || !action.canRunWhenScreenOff()) && !screenCallbackRegistered) {
+        if (
+            (!allowScreenOff || action?.canRunWhenScreenOff() == false) && !screenCallbackRegistered
+        ) {
             val filter =
                 IntentFilter().apply {
                     addAction(Intent.ACTION_SCREEN_ON)
@@ -225,6 +230,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     }
 
     private fun updateHapticIntensity() {
+        val prefs = prefs ?: return
         val value = prefs.getHapticIntensity(this)
         vibDoubleTap =
             when (value) {
@@ -251,35 +257,36 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     }
 
     private fun enableGesture() {
-        controller.startListening()
+        controller?.startListening()
     }
 
     private fun disableGesture() {
-        controller.stopListening()
+        controller?.stopListening()
     }
 
     private fun sendNewSensitivity() {
-        controller.updateSensitivity(sensitivity)
+        controller?.updateSensitivity(sensitivity)
     }
 
     private fun onGestureDetected(msg: Int) {
         if (msg != 1) return
-
-        wakelock.acquire(2000L)
+        val action = action ?: return
+        wakelock?.acquire(2000L)
         try {
-            if (settingsGate.isBlocking() && settingsGate.handleGesture()) {
-                vibrator.vibrate(vibDoubleTap, sonicAudioAttr)
+            val settingsGate = settingsGate
+            if (settingsGate != null && settingsGate.isBlocking() && settingsGate.handleGesture()) {
+                vibDoubleTap?.let { vibrator?.vibrate(it, sonicAudioAttr) }
                 return
             }
 
             if (!action.canRun()) return
 
-            vibrator.vibrate(vibDoubleTap, sonicAudioAttr)
+            vibDoubleTap?.let { vibrator?.vibrate(it, sonicAudioAttr) }
 
             action.run()
         } finally {
-            if (wakelock.isHeld) {
-                wakelock.release()
+            if (wakelock?.isHeld == true) {
+                wakelock?.release()
             }
         }
     }
@@ -292,12 +299,12 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         }
 
     private fun activateGates() {
-        settingsGate.registerListener(gateListener)
+        settingsGate?.registerListener(gateListener)
         gates.forEach { it.registerListener(gateListener) }
     }
 
     private fun deactivateGates() {
-        settingsGate.unregisterListener(gateListener)
+        settingsGate?.unregisterListener(gateListener)
         gates.forEach { it.unregisterListener(gateListener) }
     }
 

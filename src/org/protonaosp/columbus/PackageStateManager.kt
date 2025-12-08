@@ -23,8 +23,8 @@ object PackageStateManager {
     private val listeners: HashSet<PackageStateListener> = HashSet()
     private val listenersLock = Any()
     private var isReceiverRegistered = false
-    private lateinit var receiver: BroadcastReceiver
-    private lateinit var applicationContext: Context
+    private var receiver: BroadcastReceiver? = null
+    private var applicationContext: Context? = null
 
     fun onCreate(context: Context) {
         applicationContext = context.applicationContext
@@ -61,6 +61,8 @@ object PackageStateManager {
     }
 
     private fun registerReceiver() {
+        val applicationContext = applicationContext ?: return
+        val receiver = receiver ?: return
         if (!isReceiverRegistered) {
             val intentFilter =
                 IntentFilter().apply {
@@ -75,6 +77,8 @@ object PackageStateManager {
     }
 
     private fun unregisterReceiver() {
+        val applicationContext = applicationContext ?: return
+        val receiver = receiver ?: return
         if (isReceiverRegistered) {
             applicationContext.unregisterReceiver(receiver)
             isReceiverRegistered = false

@@ -25,8 +25,7 @@ import org.protonaosp.columbus.dlog
 
 class PocketDetection(context: Context, val handler: Handler) : Gate(context, handler, 2) {
 
-    private val powerManager: PowerManager =
-        context.getSystemService(Context.POWER_SERVICE) as PowerManager
+    private val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
     private val powerReceiver =
         object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -57,7 +56,7 @@ class PocketDetection(context: Context, val handler: Handler) : Gate(context, ha
         }
 
     fun refreshStatus() {
-        if (!powerManager.isInteractive) {
+        if (pm?.isInteractive == false) {
             startListeningForPocket()
         } else {
             stopListeningForPocket()

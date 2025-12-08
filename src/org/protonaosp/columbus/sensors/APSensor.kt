@@ -16,7 +16,7 @@ import org.protonaosp.columbus.actions.*
 class APSensor(val context: Context, var sensitivity: Float, val handler: Handler) :
     ColumbusSensor() {
     val samplingIntervalNs: Long
-    val sensorManager: SensorManager
+    val sensorManager: SensorManager?
     val accelerometer: Sensor?
     val gyroscope: Sensor?
     val heuristicMode: Boolean
@@ -25,9 +25,9 @@ class APSensor(val context: Context, var sensitivity: Float, val handler: Handle
     private var isListening: Boolean = false
 
     init {
-        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
+        accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        gyroscope = sensorManager?.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
         heuristicMode = isHeuristicMode(context)
         tap = TapRT(context, 153600000L)
         samplingIntervalNs = 2400000L
@@ -70,11 +70,11 @@ class APSensor(val context: Context, var sensitivity: Float, val handler: Handle
 
         fun setListening(listening: Boolean, samplingPeriod: Int) {
             if (!listening || accelerometer == null || gyroscope == null) {
-                sensorManager.unregisterListener(callback)
+                sensorManager?.unregisterListener(callback)
                 setListening(false)
             } else {
-                sensorManager.registerListener(callback, accelerometer, samplingPeriod, handler)
-                sensorManager.registerListener(callback, gyroscope, samplingPeriod, handler)
+                sensorManager?.registerListener(callback, accelerometer, samplingPeriod, handler)
+                sensorManager?.registerListener(callback, gyroscope, samplingPeriod, handler)
                 setListening(true)
             }
         }

@@ -13,8 +13,11 @@ import android.view.KeyCharacterMap
 import android.view.KeyEvent
 
 open class SendKeyCodeAction(context: Context, val keyCode: Int) : Action(context) {
+    val im = context.getSystemService(Context.INPUT_SERVICE) as? InputManager
+
     private fun triggerVirtualKeypress() {
-        val im: InputManager = context.getSystemService(Context.INPUT_SERVICE) as InputManager
+        if (im == null) return
+
         val now: Long = SystemClock.uptimeMillis()
         val downEvent: KeyEvent =
             KeyEvent(

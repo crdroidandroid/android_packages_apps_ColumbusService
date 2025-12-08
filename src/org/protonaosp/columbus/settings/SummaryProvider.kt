@@ -19,7 +19,7 @@ import org.protonaosp.columbus.getDePrefs
 import org.protonaosp.columbus.getEnabled
 
 class SummaryProvider : ContentProvider() {
-    private lateinit var prefs: SharedPreferences
+    private var prefs: SharedPreferences? = null
 
     override fun onCreate(): Boolean {
         prefs = requireContext().getDePrefs()
@@ -27,6 +27,7 @@ class SummaryProvider : ContentProvider() {
     }
 
     override fun call(method: String, arg: String?, extras: Bundle?): Bundle? {
+        val prefs = prefs ?: return null
         val bundle = Bundle()
         val summary =
             when (method) {

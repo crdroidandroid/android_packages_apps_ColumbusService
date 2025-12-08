@@ -14,25 +14,27 @@ import org.protonaosp.columbus.getDePrefs
 import org.protonaosp.columbus.getEnabled
 
 class ToggleTileService : TileService(), SharedPreferences.OnSharedPreferenceChangeListener {
-    private lateinit var prefs: SharedPreferences
+    private var prefs: SharedPreferences? = null
 
     override fun onStartListening() {
         prefs = getDePrefs()
-        prefs.registerOnSharedPreferenceChangeListener(this)
+        prefs?.registerOnSharedPreferenceChangeListener(this)
         update()
     }
 
     override fun onStopListening() {
-        prefs.unregisterOnSharedPreferenceChangeListener(this)
+        prefs?.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     private fun update(state: Boolean? = null) {
+        val prefs = prefs ?: return
         qsTile.state =
             if (state ?: prefs.getEnabled(this)) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
         qsTile.updateTile()
     }
 
     override fun onClick() {
+        val prefs = prefs ?: return
         val newState = !prefs.getEnabled(this)
         prefs.edit().putBoolean(getString(R.string.pref_key_enabled), newState).commit()
         update(newState)

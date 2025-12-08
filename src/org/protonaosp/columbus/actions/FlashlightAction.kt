@@ -17,7 +17,7 @@ import org.protonaosp.columbus.TAG
 
 class FlashlightAction(context: Context) : Action(context) {
     private val handler = Handler.createAsync(Looper.getMainLooper())
-    private val cm = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+    private val cm = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
     private val torchCamId = findCamera()
     private var available = true
     private var enabled = false
@@ -39,7 +39,7 @@ class FlashlightAction(context: Context) : Action(context) {
         }
 
     init {
-        if (torchCamId != null) {
+        if (cm != null && torchCamId != null) {
             cm.registerTorchCallback(torchCallback, handler)
         }
     }
@@ -47,6 +47,7 @@ class FlashlightAction(context: Context) : Action(context) {
     override fun canRun() = torchCamId != null && available
 
     override fun run() {
+        if (cm == null) return
         try {
             cm.setTorchMode(torchCamId!!, !enabled)
         } catch (e: CameraAccessException) {
@@ -58,12 +59,14 @@ class FlashlightAction(context: Context) : Action(context) {
     }
 
     override fun destroy() {
+        if (cm == null) return
         if (torchCamId != null) {
             cm.unregisterTorchCallback(torchCallback)
         }
     }
 
     private fun findCamera(): String? {
+        if (cm == null) return null
         for (id in cm.cameraIdList) {
             val characteristics = cm.getCameraCharacteristics(id)
             val flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE)
