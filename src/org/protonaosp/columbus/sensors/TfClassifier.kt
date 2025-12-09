@@ -24,35 +24,18 @@ class TfClassifier(context: Context) {
     private var interpreter: Interpreter? = null
 
     init {
-        val assetFileName: String = getModelFileName(context)
         try {
-            interpreter =
-                if (assetFileName == "tap7cls_custom.tflite") {
-                    val resources: Resources = context.resources
-                    val inputStream: InputStream = resources.openRawResource(R.raw.tap7cls_custom)
-                    val fileBytes = inputStream.readBytes()
-                    val byteBuffer = ByteBuffer.allocateDirect(fileBytes.size)
-                    byteBuffer.order(ByteOrder.nativeOrder())
-                    byteBuffer.put(fileBytes)
-                    byteBuffer.rewind()
-                    inputStream.close()
-                    Interpreter(byteBuffer)
-                } else {
-                    val assetManager: AssetManager = context.assets
-                    val assetFd = assetManager.openFd(assetFileName)
-                    Interpreter(
-                        FileInputStream(assetFd.fileDescriptor)
-                            .channel
-                            .map(
-                                FileChannel.MapMode.READ_ONLY,
-                                assetFd.startOffset,
-                                assetFd.declaredLength,
-                            )
-                    )
-                }
+            val resources: Resources = context.resources
+            val inputStream: InputStream = resources.openRawResource(getModelFileRes(context))
+            val fileBytes = inputStream.readBytes()
+            val byteBuffer = ByteBuffer.allocateDirect(fileBytes.size)
+            byteBuffer.order(ByteOrder.nativeOrder())
+            byteBuffer.put(fileBytes)
+            byteBuffer.rewind()
+            inputStream.close()
+            interpreter = Interpreter(byteBuffer)
         } catch (e: Exception) {
             dlog(TAG, "Failed to load tflite file: ${e.message}")
-            null
         }
     }
 

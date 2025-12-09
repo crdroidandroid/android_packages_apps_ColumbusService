@@ -26,17 +26,17 @@ fun useApSensor(context: Context): Boolean =
     context.resources.getBoolean(R.bool.default_use_apsensor) ||
         !context.packageManager.hasSystemFeature("android.hardware.context_hub")
 
-fun getModelFileName(context: Context): String {
+fun getModelFileRes(context: Context): Int {
     val model = context.getString(R.string.default_model)
     return when (model) {
-        "bramble",
-        "coral",
-        "crosshatch",
-        "flame",
-        "redfin",
-        "custom" -> "tap7cls_${model}"
-        else -> "quickTapBaseModel"
-    } + ".tflite"
+        "bramble" -> R.raw.tap7cls_bramble
+        "coral" -> R.raw.tap7cls_coral
+        "crosshatch" -> R.raw.tap7cls_crosshatch
+        "flame" -> R.raw.tap7cls_flame
+        "redfin" -> R.raw.tap7cls_redfin
+        "custom" -> R.raw.tap7cls_custom
+        else -> R.raw.quickTapBaseModel
+    }
 }
 
 fun getApSensorThrottleMs(context: Context): Long =
