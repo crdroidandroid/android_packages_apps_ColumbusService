@@ -9,10 +9,10 @@ package org.protonaosp.columbus.utils
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.UserHandle
-import android.util.Log
 import android.util.LruCache
 import androidx.annotation.VisibleForTesting
 import kotlin.math.roundToInt
+import org.protonaosp.columbus.dlog
 
 /** Cache app icon for management. */
 class AppIconCacheManager private constructor() {
@@ -47,7 +47,7 @@ class AppIconCacheManager private constructor() {
                 drawable.getIntrinsicHeight() < 0 ||
                 drawable.getIntrinsicWidth() < 0
         ) {
-            Log.w(TAG, "Invalid key or drawable.")
+            dlog(TAG, "Invalid key or drawable.")
             return
         }
         drawableCache.put(key, drawable)
@@ -63,7 +63,7 @@ class AppIconCacheManager private constructor() {
     fun get(packageName: String?, uid: Int): Drawable? {
         return getKey(packageName, uid)?.let { key -> drawableCache.get(key)?.mutate() }
             ?: run {
-                Log.w(TAG, "Invalid key with package or uid.")
+                dlog(TAG, "Invalid key with package or uid.")
                 null
             }
     }

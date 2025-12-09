@@ -6,16 +6,12 @@
 package org.protonaosp.columbus.sensors
 
 import android.content.Context
-import android.content.res.AssetManager
 import android.content.res.Resources
-import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.channels.FileChannel
 import java.util.ArrayList
 import java.util.HashMap
-import org.protonaosp.columbus.R
 import org.protonaosp.columbus.dlog
 import org.tensorflow.lite.Interpreter
 

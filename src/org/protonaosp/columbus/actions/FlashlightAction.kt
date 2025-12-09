@@ -12,8 +12,8 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import org.protonaosp.columbus.TAG
+import org.protonaosp.columbus.dlog
 
 class FlashlightAction(context: Context) : Action(context) {
     private val handler = Handler.createAsync(Looper.getMainLooper())
@@ -51,7 +51,7 @@ class FlashlightAction(context: Context) : Action(context) {
         try {
             cm.setTorchMode(torchCamId!!, !enabled)
         } catch (e: CameraAccessException) {
-            Log.e(TAG, "Failed to set torch mode to $enabled", e)
+            dlog(TAG, "Failed to set torch mode to $enabled ${e}")
             return
         }
 

@@ -11,10 +11,10 @@ import android.hardware.location.ContextHubClientCallback
 import android.hardware.location.ContextHubManager
 import android.hardware.location.NanoAppMessage
 import android.os.Handler
-import android.util.Log
 import com.google.protobuf.nano.MessageNano
 import org.protonaosp.columbus.TAG
 import org.protonaosp.columbus.actions.*
+import org.protonaosp.columbus.dlog
 import org.protonaosp.columbus.proto.nano.ContextHubMessages
 
 private const val NANOAPP_ID = 0x476f6f676c001019L
@@ -50,13 +50,13 @@ class CHRESensor(val context: Context, var sensitivity: Float, val handler: Hand
                 }
 
                 // Fallback for other unexpected messages
-                else -> Log.d(TAG, "Received unknown message of type ${msg.messageType}: $msg")
+                else -> dlog(TAG, "Received unknown message of type ${msg.messageType}: $msg")
             }
         }
 
         override fun onNanoAppAborted(client: ContextHubClient, nanoappId: Long, error: Int) {
             if (nanoappId == NANOAPP_ID) {
-                Log.e(TAG, "Columbus CHRE nanoapp aborted: $error")
+                dlog(TAG, "Columbus CHRE nanoapp aborted: $error")
             }
         }
 
@@ -88,7 +88,7 @@ class CHRESensor(val context: Context, var sensitivity: Float, val handler: Hand
             val message = NanoAppMessage.createMessageToNanoApp(NANOAPP_ID, msgType, bytes)
             val ret = client?.sendMessageToNanoApp(message) ?: return
             if (ret != 0) {
-                Log.e(TAG, "Failed to send message of type $msgType to nanoapp: $ret")
+                dlog(TAG, "Failed to send message of type $msgType to nanoapp: $ret")
             }
         }
     }

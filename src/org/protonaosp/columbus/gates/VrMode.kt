@@ -11,8 +11,8 @@ import android.os.RemoteException
 import android.os.ServiceManager
 import android.service.vr.IVrManager
 import android.service.vr.IVrStateCallbacks
-import android.util.Log
 import org.protonaosp.columbus.TAG
+import org.protonaosp.columbus.dlog
 
 class VrMode(context: Context, handler: Handler) : Gate(context, handler, 2) {
     private var inVrMode: Boolean = false
@@ -46,7 +46,7 @@ class VrMode(context: Context, handler: Handler) : Gate(context, handler, 2) {
                 it.registerListener(vrStateCallbacks)
             }
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error registering IVrManager listener: ${e.message}", e)
+            dlog(TAG, "Error registering IVrManager listener: ${e.message} ${e}")
             inVrMode = false
         }
         updateBlocking()
@@ -56,7 +56,7 @@ class VrMode(context: Context, handler: Handler) : Gate(context, handler, 2) {
         try {
             vrManager?.unregisterListener(vrStateCallbacks)
         } catch (e: RemoteException) {
-            Log.e(TAG, "Error unregistering IVrManager listener: ${e.message}", e)
+            dlog(TAG, "Error unregistering IVrManager listener: ${e.message} ${e}")
         }
         inVrMode = false
         setBlocking(false)
