@@ -42,6 +42,11 @@ This service depends on following features:
 - General:
   - Vibrator (For haptic feedback. Optional)
 
+This app doesn't provide proprietary resources which generally can be found on vendor apps for legal compliance.<br>
+All files (including lottie animation) in `res/raw/` directory in this project are empty dummy.<br>
+If you want to use TensorFlow Lite integration or lottie animations,<br>
+create your own overlay and put those in there (with `aaptflags: [ "-0 .tflite", ],` if you are using RRO).<br>
+
 Sync this repo to packages/apps/ColumbusService.
 
 Add the following to your device tree:
