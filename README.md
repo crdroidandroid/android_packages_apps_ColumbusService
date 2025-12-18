@@ -2,7 +2,7 @@
 
 This is an open-source implementation of the Pixel Quick Tap gesture, written from scratch for portability and customizability.
 
-Quick Tap, codename Columbus, is a gesture powered by AP sensors and CHRE sensor on the Pixel 4a (5G) and later that is used to activate the Google Assistant on stock.
+Quick Tap, codename Columbus, is a gesture powered by AP sensors and CHRE sensor on the Pixel 4a (5G) and later that is used to activate the Google Assistant and several other actions on stock.
 
 This app is a reverse-engineered Android client that runs as a standalone service and talks to the AP sensor and CHRE sensor for gesture functionality.
 
@@ -13,24 +13,38 @@ This app is a reverse-engineered Android client that runs as a standalone servic
 - Many actions to perform on gesture trigger
   - Take screenshot
   - Open assistant
+  - Silence call
   - Play or pause media
+  - Open notification shelf
   - See recent apps
   - Open camera
-  - Toggle flashlight
-  - Mute calls & notifications (replicates default power + volume-up "prevent ringing" gesture)
   - Toggle power menu
+  - Mute calls & notifications (replicates default power + volume-up "prevent ringing" gesture)
+  - Toggle flashlight
   - Toggle screen
-  - Launch app
+  - Launch app and shortcut
 - Setting to control whether gesture is enabled when the screen is off
 - Contextually-appropriate haptic feedback with modern effects
-  - Heavy click for back tap
+  - Configurable haptic intensity for back tap
   - Reject for unavailable action (e.g. if flashlight can't turn on because camera is in use)
+  - Blocking action in certain conditions (e.g. touch gesture in progress)
 
 ## Integration
 
+This service depends on following features:
+
+- Mendatory:
+  - When using AP Sensor:
+    - Accelerometer
+    - Gyroscope
+  - When using CHRE Sensor (Google Pixel devices):
+    - Contexthub
+- General:
+  - Vibrator (For haptic feedback. Optional)
+
 Sync this repo to packages/apps/ColumbusService.
 
-Add the following to your device tree **only for devices with this feature**:
+Add the following to your device tree:
 
 ```make
 # Quick Tap
