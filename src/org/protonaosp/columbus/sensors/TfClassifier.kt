@@ -6,30 +6,44 @@
 package org.protonaosp.columbus.sensors
 
 import android.content.Context
-import android.content.res.Resources
-import java.io.InputStream
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import java.io.FileInputStream
+import java.nio.channels.FileChannel
 import java.util.ArrayList
 import java.util.HashMap
 import org.protonaosp.columbus.dlog
 import org.tensorflow.lite.Interpreter
 
-class TfClassifier(context: Context) {
+class TfClassifier(private val context: Context) {
 
     private var interpreter: Interpreter? = null
+    var isModelLoaded: Boolean = false
+        private set
 
     init {
+        init()
+    }
+
+    private fun init() {
         try {
-            val resources: Resources = context.resources
-            val inputStream: InputStream = resources.openRawResource(getModelFileRes(context))
-            val fileBytes = inputStream.readBytes()
-            val byteBuffer = ByteBuffer.allocateDirect(fileBytes.size)
-            byteBuffer.order(ByteOrder.nativeOrder())
-            byteBuffer.put(fileBytes)
-            byteBuffer.rewind()
-            inputStream.close()
-            interpreter = Interpreter(byteBuffer)
+            val afd = context.resources.openRawResourceFd(getModelFileRes(context))
+            if (afd.length == 0L) {
+                dlog(TAG, "tflite model is empty (dummy). Interpreter will not be initialized.")
+                afd.close()
+                return
+            }
+
+            val inputStream = FileInputStream(afd.fileDescriptor)
+            val fileChannel = inputStream.channel
+            val startOffset = afd.startOffset
+            val declaredLength = afd.declaredLength
+
+            val mappedByteBuffer =
+                fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
+
+            interpreter = Interpreter(mappedByteBuffer)
+            isModelLoaded = true
+
+            afd.close()
         } catch (e: Exception) {
             dlog(TAG, "Failed to load tflite file: ${e.message}")
         }
@@ -37,7 +51,11 @@ class TfClassifier(context: Context) {
 
     @Suppress("UNCHECKED_CAST")
     fun predict(input: ArrayList<Float>, size: Int): ArrayList<ArrayList<Float>> {
-        val interpreter = interpreter ?: return ArrayList()
+        val interpreter = interpreter
+        if (!isModelLoaded || interpreter == null) {
+            dlog(TAG, "tflite model is not loaded.")
+            return ArrayList()
+        }
 
         val tfliteIn =
             java.lang.reflect.Array.newInstance(Float::class.javaPrimitiveType, 1, input.size, 1, 1)

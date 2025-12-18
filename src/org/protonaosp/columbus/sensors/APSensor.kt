@@ -28,8 +28,8 @@ class APSensor(val context: Context, var sensitivity: Float, val handler: Handle
         sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as? SensorManager
         accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         gyroscope = sensorManager?.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
-        heuristicMode = isHeuristicMode(context)
         tap = TapRT(context, 153600000L)
+        heuristicMode = isHeuristicMode(context) || tap.tflite?.isModelLoaded != true
         samplingIntervalNs = 2400000L
         callback = APCallback()
     }
