@@ -33,6 +33,9 @@
     <!-- Other non-translatable -->
     <string name="summary_placeholder" translatable="false">&#160;</string>
 
+    <!-- Quick settings tile label -->
+    <string name="quick_settings_label">Quick Tap</string>
+
     <!-- Entry points in Settings -->
     <string name="settings_entry_title">Quick Tap</string>
     <string name="settings_entry_summary_on">On / <xliff:g id="action" example="Take screenshot">%1$s</xliff:g></string>

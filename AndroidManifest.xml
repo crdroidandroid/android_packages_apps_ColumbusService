@@ -81,7 +81,7 @@
         <!-- UI -->
 
         <service android:name=".settings.ToggleTileService"
-            android:label="@string/settings_entry_title"
+            android:label="@string/quick_settings_label"
             android:icon="@drawable/ic_touch_double_24px"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             android:exported="true">
