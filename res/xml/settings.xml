@@ -23,37 +23,41 @@
         android:key="@string/categ_key_action"
         android:title="@string/setting_action_title" />
 
-    <com.android.settingslib.widget.SliderPreference
-        android:key="@string/pref_key_sensitivity"
-        android:title="@string/setting_sensitivity_title"
-        app:textStart="@string/setting_sensitivity_light"
-        app:textEnd="@string/setting_sensitivity_heavy"
-        android:min="0"
-        android:max="10"
-        app:seekBarIncrement="1"
-        app:tickMark="@android:color/transparent"
-        android:selectable="true"
-        android:defaultValue="@integer/default_sensitivity"
-        android:dependency="@string/pref_key_enabled" />
+    <PreferenceCategory
+        android:key="@string/categ_key_advanced">
 
-    <com.android.settingslib.widget.SliderPreference
-        android:key="@string/pref_key_haptic_intensity"
-        android:title="@string/setting_haptic_intensity_title"
-        app:textStart="@string/setting_haptic_intensity_light"
-        app:textEnd="@string/setting_haptic_intensity_strong"
-        android:min="0"
-        android:max="2"
-        app:seekBarIncrement="1"
-        app:tickMark="@android:color/transparent"
-        android:selectable="true"
-        android:defaultValue="@integer/default_haptic_intensity"
-        android:dependency="@string/pref_key_enabled" />
+        <com.android.settingslib.widget.SliderPreference
+            android:key="@string/pref_key_sensitivity"
+            android:title="@string/setting_sensitivity_title"
+            app:textStart="@string/setting_sensitivity_light"
+            app:textEnd="@string/setting_sensitivity_heavy"
+            android:min="0"
+            android:max="10"
+            app:seekBarIncrement="1"
+            app:tickMark="@android:color/transparent"
+            android:selectable="true"
+            android:defaultValue="@integer/default_sensitivity"
+            android:dependency="@string/pref_key_enabled" />
 
-    <SwitchPreferenceCompat
-        android:key="@string/pref_key_allow_screen_off"
-        android:title="@string/setting_screen_off_title"
-        android:summary="@string/setting_screen_off_summary"
-        android:defaultValue="@bool/default_allow_screen_off"
-        android:dependency="@string/pref_key_enabled" />
+        <com.android.settingslib.widget.SliderPreference
+            android:key="@string/pref_key_haptic_intensity"
+            android:title="@string/setting_haptic_intensity_title"
+            app:textStart="@string/setting_haptic_intensity_light"
+            app:textEnd="@string/setting_haptic_intensity_strong"
+            android:min="0"
+            android:max="2"
+            app:seekBarIncrement="1"
+            app:tickMark="@android:color/transparent"
+            android:selectable="true"
+            android:defaultValue="@integer/default_haptic_intensity"
+            android:dependency="@string/pref_key_enabled" />
+
+        <SwitchPreferenceCompat
+            android:key="@string/pref_key_allow_screen_off"
+            android:title="@string/setting_screen_off_title"
+            android:summary="@string/setting_screen_off_summary"
+            android:defaultValue="@bool/default_allow_screen_off"
+            android:dependency="@string/pref_key_enabled" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

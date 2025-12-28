@@ -22,6 +22,7 @@
 
     <!-- Categ keys -->
     <string name="categ_key_action" translatable="false">columbus_action_category</string>
+    <string name="categ_key_advanced" translatable="false">columbus_advanced_category</string>
     <string name="categ_key_app_list" translatable="false">columbus_app_list</string>
     <string name="categ_key_app_shortcut_list" translatable="false">columbus_app_shortcut_list</string>
 
