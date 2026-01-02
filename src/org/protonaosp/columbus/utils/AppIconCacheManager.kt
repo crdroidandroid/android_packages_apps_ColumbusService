@@ -6,6 +6,8 @@
 
 package org.protonaosp.columbus.utils
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.UserHandle
@@ -50,7 +52,7 @@ class AppIconCacheManager private constructor() {
             dlog(TAG, "Invalid key or drawable.")
             return
         }
-        drawableCache.put(key, drawable)
+        drawableCache.put(key, drawable.flattenToBitmap())
     }
 
     /**
@@ -98,6 +100,22 @@ class AppIconCacheManager private constructor() {
             val maxSize: Int = manager.drawableCache.maxSize() ?: return
             manager.drawableCache.trimToSize(maxSize / 2)
         }
+    }
+
+    private fun Drawable.flattenToBitmap(): BitmapDrawable {
+        if (this is BitmapDrawable) {
+            return this
+        }
+
+        val width = if (this.intrinsicWidth > 0) this.intrinsicWidth else 1
+        val height = if (this.intrinsicHeight > 0) this.intrinsicHeight else 1
+
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        this.setBounds(0, 0, canvas.width, canvas.height)
+        this.draw(canvas)
+
+        return BitmapDrawable(null, bitmap)
     }
 
     companion object {
