@@ -6,6 +6,7 @@
 
 package org.protonaosp.columbus.utils
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -103,12 +104,40 @@ class AppIconCacheManager private constructor() {
     }
 
     private fun Drawable.flattenToBitmap(): BitmapDrawable {
-        if (this is BitmapDrawable) {
-            return this
+        val density = Resources.getSystem().displayMetrics.density
+        val standardSize = (48 * density).roundToInt()
+
+        if (this is BitmapDrawable && this.bitmap != null) {
+            val bitmap = this.bitmap
+            val width = bitmap.width
+            val height = bitmap.height
+
+            if (width <= standardSize && height <= standardSize) {
+                return this
+            }
         }
 
-        val width = if (this.intrinsicWidth > 0) this.intrinsicWidth else 1
-        val height = if (this.intrinsicHeight > 0) this.intrinsicHeight else 1
+        var width = standardSize
+        var height = standardSize
+
+        val intrinsicW = this.intrinsicWidth
+        val intrinsicH = this.intrinsicHeight
+
+        if (intrinsicW > 0 && intrinsicH > 0) {
+            if (intrinsicW > standardSize || intrinsicH > standardSize) {
+                val ratio = intrinsicW.toFloat() / intrinsicH.toFloat()
+                if (intrinsicW > intrinsicH) {
+                    width = standardSize
+                    height = (standardSize / ratio).toInt()
+                } else {
+                    height = standardSize
+                    width = (standardSize * ratio).toInt()
+                }
+            } else {
+                width = intrinsicW
+                height = intrinsicH
+            }
+        }
 
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
