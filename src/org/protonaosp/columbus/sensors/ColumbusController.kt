@@ -33,6 +33,7 @@ class ColumbusController(val context: Context, val sensor: ColumbusSensor, val h
                 ScreenTouch(context, handler),
                 SystemKeyPress(context, handler),
                 PowerState(context, handler),
+                Haptic(context, handler),
             )
 
         softGateListener =
