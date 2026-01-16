@@ -155,6 +155,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
             "flashlight" -> FlashlightAction(this)
             "screen" -> ScreenAction(this)
             "launch" -> LaunchAction(this)
+            "contextual_search" -> ContextualSearchAction(this)
 
             else -> DummyAction(this)
         }

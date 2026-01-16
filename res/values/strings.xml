@@ -72,6 +72,7 @@
     <!-- Actions -->
     <string name="action_screenshot_name">Take screenshot</string>
     <string name="action_assistant_name">Access your digital assistant</string>
+    <string name="action_contextual_search_name">Search using the content on your screen</string>
     <string name="action_silence_call_name">Silence an incoming call</string>
     <string name="action_media_name">Play or pause media</string>
     <string name="action_notifications_name">Show notifications</string>
@@ -85,6 +86,7 @@
 
     <string name="action_screenshot_value">screenshot</string>
     <string name="action_assistant_value">assistant</string>
+    <string name="action_contextual_search_value">contextual_search</string>
     <string name="action_silence_call_value">silence_call</string>
     <string name="action_media_value">media</string>
     <string name="action_notifications_value">notifications</string>
@@ -100,6 +102,7 @@
     <string-array name="action_values" translatable="false">
         <item>@string/action_screenshot_value</item>
         <item>@string/action_assistant_value</item>
+        <item>@string/action_contextual_search_value</item>
         <item>@string/action_silence_call_value</item>
         <item>@string/action_media_value</item>
         <item>@string/action_notifications_value</item>
@@ -114,6 +117,7 @@
     <string-array name="action_names" translatable="false">
         <item>@string/action_screenshot_name</item>
         <item>@string/action_assistant_name</item>
+        <item>@string/action_contextual_search_name</item>
         <item>@string/action_silence_call_name</item>
         <item>@string/action_media_name</item>
         <item>@string/action_notifications_name</item>
