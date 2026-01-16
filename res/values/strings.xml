@@ -38,7 +38,7 @@
     <string name="quick_settings_label">Quick Tap</string>
 
     <!-- Entry points in Settings -->
-    <string name="settings_entry_title">Quick Tap</string>
+    <string name="settings_entry_title">Quick Tap to start actions</string>
     <string name="settings_entry_summary_on">On / <xliff:g id="action" example="Take screenshot">%1$s</xliff:g></string>
     <string name="settings_entry_summary_off">Off</string>
     <string name="settings_search_keywords">Quick Tap, back tap, tap, gesture, assist, assistant</string>
@@ -55,15 +55,15 @@
     <string name="setting_screen_off_title">Allow when screen is off</string>
     <string name="setting_screen_off_summary">May increase false triggers</string>
     <string name="setting_screen_off_blocked_summary">Blocked by current action</string>
-    <string name="setting_action_title" product="default">Double tap back of phone to</string>
-    <string name="setting_action_title" product="device">Double tap back of device to</string>
-    <string name="setting_action_title" product="tablet">Double tap back of tablet to</string>
+    <string name="setting_action_title" product="default">Tap back of phone twice to</string>
+    <string name="setting_action_title" product="device">Tap back of device twice to</string>
+    <string name="setting_action_title" product="tablet">Tap back of tablet twice to</string>
     <string name="launch_settings_activity_title">Quick Tap settings</string>
-    <string name="setting_app_selection_help_text" product="default">Select an app to open when you double tap the back of your phone. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
-    <string name="setting_app_selection_help_text" product="device">Select an app to open when you double tap the back of your device. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
-    <string name="setting_app_selection_help_text" product="tablet">Select an app to open when you double tap the back of your tablet. If app uninstalled, Quick Tap will be disabled until different app selected.</string>
+    <string name="setting_app_selection_help_text" product="default">Select an app to open when you tap the back of your phone twice. If you uninstall the app, Quick Tap turns off until you select a different app.</string>
+    <string name="setting_app_selection_help_text" product="device">Select an app to open when you tap the back of your device twice. If you uninstall the app, Quick Tap turns off until you select a different app.</string>
+    <string name="setting_app_selection_help_text" product="tablet">Select an app to open when you tap the back of your tablet twice. If you uninstall the app, Quick Tap turns off until you select a different app.</string>
     <string name="setting_app_selection_help_text_disabled">To use this feature, you have to enable the Quick Tap first.</string>
-    <string name="setting_app_shortcut_selection_help_text">Select shortcut to launch when this app opened by Quick Tap.</string>
+    <string name="setting_app_shortcut_selection_help_text">Select what happens when you use Quick Tap. You can change this later in settings.</string>
     <string name="setting_app_shortcut_selection_help_text_disabled">@string/setting_app_selection_help_text_disabled</string>
     <string name="radio_button_extra_widget_a11y_label"><xliff:g id="action">%1$s</xliff:g> settings</string>
     <string name="setting_action_launch_summary_no_selection">No app selected</string>
@@ -75,8 +75,8 @@
     <string name="action_contextual_search_name">Search using the content on your screen</string>
     <string name="action_silence_call_name">Silence an incoming call</string>
     <string name="action_media_name">Play or pause media</string>
-    <string name="action_notifications_name">Show notifications</string>
     <string name="action_overview_name">See recent apps</string>
+    <string name="action_notifications_name">Show notifications</string>
     <string name="action_camera_name">Open camera</string>
     <string name="action_power_menu_name">Open power menu</string>
     <string name="action_mute_name">Mute calls and notifications</string>
@@ -89,8 +89,8 @@
     <string name="action_contextual_search_value">contextual_search</string>
     <string name="action_silence_call_value">silence_call</string>
     <string name="action_media_value">media</string>
-    <string name="action_notifications_value">notifications</string>
     <string name="action_overview_value">overview</string>
+    <string name="action_notifications_value">notifications</string>
     <string name="action_camera_value">camera</string>
     <string name="action_power_menu_value">power_menu</string>
     <string name="action_mute_value">mute</string>
@@ -105,8 +105,8 @@
         <item>@string/action_contextual_search_value</item>
         <item>@string/action_silence_call_value</item>
         <item>@string/action_media_value</item>
-        <item>@string/action_notifications_value</item>
         <item>@string/action_overview_value</item>
+        <item>@string/action_notifications_value</item>
         <item>@string/action_camera_value</item>
         <item>@string/action_power_menu_value</item>
         <item>@string/action_mute_value</item>
@@ -120,8 +120,8 @@
         <item>@string/action_contextual_search_name</item>
         <item>@string/action_silence_call_name</item>
         <item>@string/action_media_name</item>
-        <item>@string/action_notifications_name</item>
         <item>@string/action_overview_name</item>
+        <item>@string/action_notifications_name</item>
         <item>@string/action_camera_name</item>
         <item>@string/action_power_menu_name</item>
         <item>@string/action_mute_name</item>
