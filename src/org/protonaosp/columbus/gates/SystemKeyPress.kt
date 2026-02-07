@@ -17,6 +17,7 @@ import com.android.systemui.shared.system.InputMonitorCompat
 import org.protonaosp.columbus.TAG
 
 class SystemKeyPress(context: Context, handler: Handler) : Gate(context, handler, 2) {
+    private val monitorName = "$TAG/SystemKeyPress"
     private val clearBlocking = Runnable { setBlocking(false) }
     private val blockingKeys =
         setOf(KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN, KeyEvent.KEYCODE_POWER)
@@ -45,12 +46,10 @@ class SystemKeyPress(context: Context, handler: Handler) : Gate(context, handler
         }
 
     private fun dispose() {
-        if (inputEventReceiver != null) {
-            inputEventReceiver!!.dispose()
-        }
-        if (inputMonitor != null) {
-            inputMonitor!!.dispose()
-        }
+        inputEventReceiver?.dispose()
+        inputEventReceiver = null
+        inputMonitor?.dispose()
+        inputMonitor = null
     }
 
     private fun isBlockingKeys(keyEvent: KeyEvent): Boolean {
@@ -59,7 +58,7 @@ class SystemKeyPress(context: Context, handler: Handler) : Gate(context, handler
 
     fun startListeningForKeyPress() {
         if (inputEventReceiver != null) return
-        inputMonitor = InputMonitorCompat(TAG, 0)
+        inputMonitor = InputMonitorCompat(monitorName, 0)
         inputEventReceiver =
             inputMonitor!!.getInputReceiver(
                 Looper.getMainLooper(),
@@ -71,8 +70,6 @@ class SystemKeyPress(context: Context, handler: Handler) : Gate(context, handler
     fun stopListeningForKeyPress() {
         setBlocking(false)
         dispose()
-        inputEventReceiver = null
-        inputMonitor = null
     }
 
     override fun onActivate() {
