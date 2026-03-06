@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: The Proton AOSP Project
+  SPDX-FileCopyrightText: TheParasiteProject
+  SPDX-License-Identifier: Apache-2.0
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Dịch vụ Chạm nhanh</string>
+
+    <!-- Quick settings tile label -->
+    <string name="quick_settings_label">Chạm nhanh</string>
+
+    <!-- Entry points in Settings -->
+    <string name="settings_entry_title">Chạm nhanh để bắt đầu các thao tác</string>
+    <string name="settings_entry_summary_on">Đang bật / <xliff:g id="action">%1$s</xliff:g></string>
+    <string name="settings_entry_summary_off">Đang tắt</string>
+    <string name="settings_search_keywords">Chạm nhanh, chạm mặt sau, chạm, cử chỉ, trợ giúp, trợ lý</string>
+
+    <!-- Items in Quick Tap gesture settings -->
+    <string name="setting_enabled_title">Sử dụng chế độ Chạm nhanh</string>
+    <string name="setting_footer_content">Để thực hiện thao tác, chạm gần khu vực giữa ở mặt sau điện thoại của bạn hai lần</string>
+    <string name="setting_sensitivity_title">Độ nhạy</string>
+    <string name="setting_sensitivity_light">Chạm nhẹ</string>
+    <string name="setting_sensitivity_heavy">Chạm mạnh</string>
+    <string name="setting_haptic_intensity_title">Cường độ cảm ứng xúc giác</string>
+    <string name="setting_haptic_intensity_light">Nhẹ</string>
+    <string name="setting_haptic_intensity_strong">Mạnh</string>
+    <string name="setting_screen_off_title">Cho phép khi màn hình ở trạng thái tắt</string>
+    <string name="setting_screen_off_summary">Có thể tăng khả năng kích hoạt nhầm</string>
+    <string name="setting_screen_off_blocked_summary">Bị chặn bởi thao tác hiện tại</string>
+    <string name="setting_action_title" product="default">Chạm vào mặt sau của điện thoại hai lần để</string>
+    <string name="setting_action_title" product="device">Chạm vào mặt sau của thiết bị hai lần để</string>
+    <string name="setting_action_title" product="tablet">Tap back of tablet twice to</string>
+    <string name="launch_settings_activity_title">Cài đặt Chạm nhanh</string>
+    <string name="setting_app_selection_help_text" product="default">Chọn một ứng dụng sẽ mở khi bạn chạm vào mặt sau của điện thoại hai lần. Nếu bạn gỡ cài đặt ứng dụng đó, chế độ Chạm nhanh sẽ tắt cho tới khi bạn chọn một ứng dụng khác.</string>
+    <string name="setting_app_selection_help_text" product="device">Chọn một ứng dụng sẽ mở khi bạn chạm vào mặt sau của thiết bị hai lần. Nếu bạn gỡ cài đặt ứng dụng đó, chế độ Chạm nhanh sẽ tắt cho tới khi bạn chọn một ứng dụng khác.</string>
+    <string name="setting_app_selection_help_text" product="tablet">Chọn một ứng dụng sẽ mở khi bạn chạm vào mặt sau của máy tính bảng hai lần. Nếu bạn gỡ cài đặt ứng dụng đó, chế độ Chạm nhanh sẽ tắt cho tới khi bạn chọn một ứng dụng khác.</string>
+    <string name="setting_app_selection_help_text_disabled">Để sử dụng tính năng này, bạn phải bật chế độ Chạm nhanh trước.</string>
+    <string name="setting_app_shortcut_selection_help_text">Chọn hành động sẽ xảy ra khi bạn dùng chế độ Chạm nhanh. Bạn có thể thay đổi chế độ này vào lúc khác trong phần cài đặt.</string>
+    <string name="radio_button_extra_widget_a11y_label">Cài đặt <xliff:g id="action">%1$s</xliff:g></string>
+    <string name="setting_action_launch_summary_no_selection">Chưa chọn ứng dụng nào</string>
+    <string name="setting_action_launch_summary_not_installed">Ứng dụng chưa đuợc cài đặt</string>
+
+    <!-- Actions -->
+    <string name="action_screenshot_name">Chụp ảnh màn hình</string>
+    <string name="action_assistant_name">Sử dụng trợ lý kỹ thuật số</string>
+    <string name="action_contextual_search_name">Tìm kiếm bằng nội dung có sẵn trên màn hình của bạn</string>
+    <string name="action_silence_call_name">Tắt chuông cuộc gọi đến</string>
+    <string name="action_media_name">Phát hoặc tạm dừng nhạc/video</string>
+    <string name="action_overview_name">Xem các ứng dụng gần đây</string>
+    <string name="action_notifications_name">Xem các thông báo</string>
+    <string name="action_camera_name">Mở ứng dụng Máy ảnh</string>
+    <string name="action_power_menu_name">Mở trình đơn nguồn</string>
+    <string name="action_mute_name">Tắt chuông các cuộc gọi và thông báo</string>
+    <string name="action_flashlight_name">Bật/Tắt đèn pin</string>
+    <string name="action_screen_name">Bật/Tắt màn hình</string>
+    <string name="action_launch_name">Mở ứng dụng</string>
+
+    <!-- Toast -->
+    <string name="gesture_detected">Phát hiện thấy chế độ Chạm nhanh!</string>
+
+</resources>
