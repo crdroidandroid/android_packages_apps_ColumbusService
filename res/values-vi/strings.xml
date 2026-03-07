@@ -30,7 +30,7 @@
     <string name="setting_screen_off_blocked_summary">Bị chặn bởi thao tác hiện tại</string>
     <string name="setting_action_title" product="default">Chạm vào mặt sau của điện thoại hai lần để</string>
     <string name="setting_action_title" product="device">Chạm vào mặt sau của thiết bị hai lần để</string>
-    <string name="setting_action_title" product="tablet">Tap back of tablet twice to</string>
+    <string name="setting_action_title" product="tablet">Chạm vào mặt sau của máy tính bảng hai lần để</string>
     <string name="launch_settings_activity_title">Cài đặt Chạm nhanh</string>
     <string name="setting_app_selection_help_text" product="default">Chọn một ứng dụng sẽ mở khi bạn chạm vào mặt sau của điện thoại hai lần. Nếu bạn gỡ cài đặt ứng dụng đó, chế độ Chạm nhanh sẽ tắt cho tới khi bạn chọn một ứng dụng khác.</string>
     <string name="setting_app_selection_help_text" product="device">Chọn một ứng dụng sẽ mở khi bạn chạm vào mặt sau của thiết bị hai lần. Nếu bạn gỡ cài đặt ứng dụng đó, chế độ Chạm nhanh sẽ tắt cho tới khi bạn chọn một ứng dụng khác.</string>
