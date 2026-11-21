@@ -48,7 +48,6 @@
     <string name="action_overview_name">Anwendungsverlauf öffnen</string>
     <string name="action_camera_name">Kamera öffnen</string>
     <string name="action_power_menu_name">Ein-/Aus-Menü öffnen</string>
-    <string name="action_mute_name">Anrufe und Benachrichtigungen stummschalten</string>
     <string name="action_flashlight_name">Taschenlampe ein-/ausschalten</string>
     <string name="action_screen_name">Display ein-/ausschalten</string>
     <string name="action_launch_name">App öffnen</string>

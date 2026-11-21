@@ -13,7 +13,6 @@ import android.hardware.location.NanoAppMessage
 import android.os.Handler
 import com.google.protobuf.nano.MessageNano
 import org.protonaosp.columbus.TAG
-import org.protonaosp.columbus.actions.*
 import org.protonaosp.columbus.dlog
 import org.protonaosp.columbus.proto.nano.ContextHubMessages
 

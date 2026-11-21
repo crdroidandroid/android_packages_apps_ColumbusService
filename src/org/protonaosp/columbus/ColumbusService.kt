@@ -13,15 +13,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.database.ContentObserver
 import android.media.AudioAttributes
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.os.PowerManager
+import android.os.UserHandle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import org.protonaosp.columbus.actions.*
+import lineageos.providers.LineageSettings
+import org.lineageos.internal.util.DeviceKeysConstants.Action
+import org.lineageos.internal.util.DeviceKeysConstants.canQuickTapRunWithScreenOff
 import org.protonaosp.columbus.gates.*
 import org.protonaosp.columbus.sensors.APSensor
 import org.protonaosp.columbus.sensors.CHRESensor
@@ -33,7 +37,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     // Services
     private var vibrator: Vibrator? = null
     private var prefs: SharedPreferences? = null
-    private var action: Action? = null
+    private var action: Action = Action.NOTHING
     private var vibDoubleTap: VibrationEffect? = null
     private var sensor: ColumbusSensor? = null
     private var controller: ColumbusController? = null
@@ -97,6 +101,8 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
                 TableDetection(this, handler),
             )
 
+        prefs?.migrateLegacyAction(this)
+
         updateHapticIntensity()
         updateAction()
         updateSensitivity()
@@ -107,11 +113,18 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
 
         // Only register for changes after initial pref updates
         prefs?.registerOnSharedPreferenceChangeListener(this)
+        contentResolver.registerContentObserver(
+            LineageSettings.System.getUriFor(LineageSettings.System.KEY_QUICK_TAP_ACTION),
+            false,
+            actionObserver,
+            UserHandle.USER_ALL,
+        )
     }
 
     override fun onDestroy() {
         // Cleanup preferences listener
         prefs?.unregisterOnSharedPreferenceChangeListener(this)
+        contentResolver.unregisterContentObserver(actionObserver)
 
         PackageStateManager.onDestroy()
 
@@ -134,31 +147,8 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
             wakelock?.release()
         }
 
-        // Cleanup action
-        action?.destroy()
-        action = null
 
         super.onDestroy()
-    }
-
-    private fun createAction(key: String): Action {
-        return when (key) {
-            "screenshot" -> ScreenshotAction(this)
-            "assistant" -> AssistantAction(this)
-            "silence_call" -> SilenceCallAction(this)
-            "media" -> PlayPauseAction(this)
-            "notifications" -> NotificationAction(this)
-            "overview" -> RecentsAction(this)
-            "camera" -> CameraAction(this)
-            "power_menu" -> PowerMenuAction(this)
-            "mute" -> MuteAction(this)
-            "flashlight" -> FlashlightAction(this)
-            "screen" -> ScreenAction(this)
-            "launch" -> LaunchAction(this)
-            "contextual_search" -> ContextualSearchAction(this)
-
-            else -> DummyAction(this)
-        }
     }
 
     private fun updateSensitivity() {
@@ -175,21 +165,26 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
 
     private fun updateAction() {
         val prefs = prefs ?: return
-        val key = prefs.getAction(this)
-        dlog(TAG, "Setting action to $key")
-        action?.destroy()
-        action = createAction(key)
+        action = getQuickTapAction()
+        dlog(TAG, "Setting action to $action")
 
-        val action = action ?: return
         // For settings
         prefs
             .edit()
             .putBoolean(
                 getString(R.string.pref_key_allow_screen_off_action_forced),
-                !action.canRunWhenScreenOff(),
+                !canQuickTapRunWithScreenOff(action),
             )
             .apply()
     }
+
+    private val actionObserver =
+        object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                updateAction()
+                updateScreenCallback()
+            }
+        }
 
     private fun updateEnabled() {
         enabled = prefs?.getEnabled(this) ?: return
@@ -213,7 +208,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
 
         // Listen if either condition *can't* run when screen is off
         if (
-            (!allowScreenOff || action?.canRunWhenScreenOff() == false) && !screenCallbackRegistered
+            (!allowScreenOff || !canQuickTapRunWithScreenOff(action)) && !screenCallbackRegistered
         ) {
             val filter =
                 IntentFilter().apply {
@@ -247,11 +242,6 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         when (key) {
             getString(R.string.pref_key_enabled) -> updateEnabled()
             getString(R.string.pref_key_sensitivity) -> updateSensitivity()
-            // Action might change screen callback behavior
-            getString(R.string.pref_key_action) -> {
-                updateAction()
-                updateScreenCallback()
-            }
             getString(R.string.pref_key_haptic_intensity) -> updateHapticIntensity()
             getString(R.string.pref_key_allow_screen_off) -> updateScreenCallback()
         }
@@ -271,7 +261,6 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
 
     private fun onGestureDetected(msg: Int) {
         if (msg != 1) return
-        val action = action ?: return
         wakelock?.acquire(2000L)
         try {
             val settingsGate = settingsGate
@@ -280,11 +269,17 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
                 return
             }
 
-            if (!action.canRun()) return
+            if (action == Action.NOTHING) return
 
             vibDoubleTap?.let { vibrator?.vibrate(it, sonicAudioAttr) }
 
-            action.run()
+            // PhoneWindowManager performs the action set in KEY_QUICK_TAP_ACTION.
+            sendBroadcastAsUser(
+                Intent(lineageos.content.Intent.ACTION_QUICK_TAP)
+                    .setPackage(PACKAGE_ANDROID)
+                    .addFlags(Intent.FLAG_RECEIVER_FOREGROUND),
+                UserHandle.CURRENT,
+            )
         } finally {
             if (wakelock?.isHeld == true) {
                 wakelock?.release()
@@ -350,6 +345,8 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         }
 
     companion object {
+        private const val PACKAGE_ANDROID = "android"
+
         // Vibration effects from HapticFeedbackConstants
         // Duplicated because we can't use performHapticFeedback in a background service
         private val sonicAudioAttr: AudioAttributes =

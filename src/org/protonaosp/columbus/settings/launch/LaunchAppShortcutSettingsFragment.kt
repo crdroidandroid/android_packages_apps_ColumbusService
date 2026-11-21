@@ -28,10 +28,9 @@ import org.protonaosp.columbus.PackageStateManager
 import org.protonaosp.columbus.R
 import org.protonaosp.columbus.getDePrefs
 import org.protonaosp.columbus.getEnabled
-import org.protonaosp.columbus.getLaunchActionAppShortcut
-import org.protonaosp.columbus.setAction
-import org.protonaosp.columbus.setLaunchActionApp
-import org.protonaosp.columbus.setLaunchActionAppShortcut
+import org.protonaosp.columbus.getQuickTapLaunchApp
+import org.protonaosp.columbus.getQuickTapLaunchShortcut
+import org.protonaosp.columbus.setQuickTapLaunchApp
 import org.protonaosp.columbus.settings.ObservablePreferenceFragment
 import org.protonaosp.columbus.widget.RadioButtonPreference
 
@@ -45,7 +44,6 @@ class LaunchAppShortcutSettingsFragment :
     private val _context by lazy { requireContext() }
     private var prefs: SharedPreferences? = null
     private var launcherApps: LauncherApps? = null
-    private var openAppValue: String? = null
     private var application: ComponentName? = null
     private var shortcutInfos: ArrayList<ShortcutInfo?>? = null
     private var shortcutlistCategory: PreferenceCategory? = null
@@ -75,7 +73,6 @@ class LaunchAppShortcutSettingsFragment :
         prefs?.registerOnSharedPreferenceChangeListener(this)
         currentUser = ActivityManager.getCurrentUser()
         launcherApps = _context.getSystemService(LauncherApps::class.java)
-        openAppValue = _context.getString(R.string.action_launch_value)
         shortcutlistCategory =
             preferenceScreen.findPreference<PreferenceCategory>(
                 getString(R.string.categ_key_app_shortcut_list)
@@ -144,15 +141,13 @@ class LaunchAppShortcutSettingsFragment :
     override fun onRadioButtonClicked(emiter: SelectorWithWidgetPreference) {
         if (emiter !is RadioButtonPreference) return
         val application = application ?: return
-        val openAppValue = openAppValue ?: return
 
+        // The first entry, keyed by the app itself, opens the app instead of a shortcut.
         val key = emiter.key
-
-        prefs?.apply {
-            setAction(_context, openAppValue)
-            setLaunchActionApp(_context, application.flattenToString())
-            setLaunchActionAppShortcut(_context, key)
-        }
+        _context.setQuickTapLaunchApp(
+            application,
+            if (key == application.flattenToString()) null else key,
+        )
 
         updateState()
     }
@@ -178,7 +173,12 @@ class LaunchAppShortcutSettingsFragment :
         val prefs = prefs ?: return
 
         val enabled = prefs.getEnabled(_context)
-        var currentShortcut = prefs.getLaunchActionAppShortcut(_context)
+        val currentShortcut =
+            if (_context.getQuickTapLaunchApp() != application) {
+                null
+            } else {
+                _context.getQuickTapLaunchShortcut() ?: application?.flattenToString()
+            }
         for (i in 0 until preferenceCount) {
             val pref = shortcutlistCategory.getPreference(i)
             if (pref is RadioButtonPreference) {

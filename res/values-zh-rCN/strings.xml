@@ -48,7 +48,6 @@
     <string name="action_overview_name">打开最近任务</string>
     <string name="action_camera_name">打开相机</string>
     <string name="action_power_menu_name">打开电源菜单</string>
-    <string name="action_mute_name">将通话和通知静音</string>
     <string name="action_flashlight_name">开启或关闭手电筒</string>
     <string name="action_screen_name">开启或关闭屏幕</string>
     <string name="action_launch_name">启动应用</string>

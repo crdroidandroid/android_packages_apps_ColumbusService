@@ -14,7 +14,7 @@ import android.net.Uri
 import android.os.Bundle
 import com.android.settingslib.drawer.TileUtils.META_DATA_PREFERENCE_SUMMARY
 import org.protonaosp.columbus.R
-import org.protonaosp.columbus.getActionName
+import org.protonaosp.columbus.getQuickTapActionName
 import org.protonaosp.columbus.getDePrefs
 import org.protonaosp.columbus.getEnabled
 
@@ -36,7 +36,7 @@ class SummaryProvider : ContentProvider() {
                         requireContext()
                             .getString(
                                 R.string.settings_entry_summary_on,
-                                prefs.getActionName(requireContext()),
+                                requireContext().getQuickTapActionName(),
                             )
                     } else {
                         requireContext().getString(R.string.settings_entry_summary_off)

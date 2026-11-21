@@ -49,7 +49,6 @@
     <string name="action_overview_name">Otwórz przełącznik ostatnich aplikacji</string>
     <string name="action_camera_name">Uruchom aparat</string>
     <string name="action_power_menu_name">Otwórz menu zasilania</string>
-    <string name="action_mute_name">Wycisz połączenia i powiadomienia</string>
     <string name="action_flashlight_name">Włącz/wyłącz latarkę</string>
     <string name="action_screen_name">Włącz/wyłącz ekran</string>
     <string name="action_launch_name">Uruchom aplikację</string>

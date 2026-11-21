@@ -11,7 +11,6 @@
     <string name="pref_key_lottie" translatable="false">video</string>
     <string name="pref_key_enabled" translatable="false">columbus_enabled</string>
     <string name="pref_key_sensitivity" translatable="false">sensitivity</string>
-    <string name="pref_key_action" translatable="false">columbus_action</string>
     <string name="pref_key_launch_app" translatable="false">columbus_launch_app</string>
     <string name="pref_key_launch_app_shortcut" translatable="false">columbus_launch_app_shortcut</string>
     <string name="pref_key_allow_screen_off" translatable="false">allow_screen_off</string>
@@ -79,56 +78,22 @@
     <string name="action_notifications_name">Show notifications</string>
     <string name="action_camera_name">Open camera</string>
     <string name="action_power_menu_name">Open power menu</string>
-    <string name="action_mute_name">Mute calls and notifications</string>
     <string name="action_flashlight_name">Toggle flashlight</string>
     <string name="action_screen_name">Turn screen on or off</string>
     <string name="action_launch_name">Open app</string>
+    <string name="action_menu_name">Open or close menu</string>
+    <string name="action_voice_search_name">Voice search</string>
+    <string name="action_in_app_search_name">In-app search</string>
+    <string name="action_last_app_name">Switch to last app</string>
+    <string name="action_split_screen_name">Split screen</string>
+    <string name="action_kill_app_name">Close current app</string>
+    <string name="action_partial_screenshot_name">Take partial screenshot</string>
+    <string name="action_ringer_mode_name">Change ringer mode</string>
+    <string name="action_volume_panel_name">Show volume panel</string>
+    <string name="action_clear_notifications_name">Clear all notifications</string>
+    <string name="action_qs_panel_name">Expand Quick Settings</string>
 
-    <string name="action_screenshot_value">screenshot</string>
-    <string name="action_assistant_value">assistant</string>
-    <string name="action_contextual_search_value">contextual_search</string>
-    <string name="action_silence_call_value">silence_call</string>
-    <string name="action_media_value">media</string>
-    <string name="action_overview_value">overview</string>
-    <string name="action_notifications_value">notifications</string>
-    <string name="action_camera_value">camera</string>
-    <string name="action_power_menu_value">power_menu</string>
-    <string name="action_mute_value">mute</string>
-    <string name="action_flashlight_value">flashlight</string>
-    <string name="action_screen_value">screen</string>
-    <string name="action_launch_value">launch</string>
 
-    <!-- Actions meta -->
-    <string-array name="action_values" translatable="false">
-        <item>@string/action_screenshot_value</item>
-        <item>@string/action_assistant_value</item>
-        <item>@string/action_contextual_search_value</item>
-        <item>@string/action_silence_call_value</item>
-        <item>@string/action_media_value</item>
-        <item>@string/action_overview_value</item>
-        <item>@string/action_notifications_value</item>
-        <item>@string/action_camera_value</item>
-        <item>@string/action_power_menu_value</item>
-        <item>@string/action_mute_value</item>
-        <item>@string/action_flashlight_value</item>
-        <item>@string/action_screen_value</item>
-        <item>@string/action_launch_value</item>
-    </string-array>
-    <string-array name="action_names" translatable="false">
-        <item>@string/action_screenshot_name</item>
-        <item>@string/action_assistant_name</item>
-        <item>@string/action_contextual_search_name</item>
-        <item>@string/action_silence_call_name</item>
-        <item>@string/action_media_name</item>
-        <item>@string/action_overview_name</item>
-        <item>@string/action_notifications_name</item>
-        <item>@string/action_camera_name</item>
-        <item>@string/action_power_menu_name</item>
-        <item>@string/action_mute_name</item>
-        <item>@string/action_flashlight_name</item>
-        <item>@string/action_screen_name</item>
-        <item>@string/action_launch_name</item>
-    </string-array>
 
     <!-- Toast -->
     <string name="gesture_detected">Quick Tap detected!</string>

@@ -57,11 +57,7 @@ PRODUCT_PACKAGES += \
     ColumbusService
 ```
 
-While this service is designed to be as portable and self-contained as possible, Android does not provide the necessary APIs to implement all gesture actions out-of-the-box. This means that some commits must be added to frameworks/base to expose the APIs for full functionality:
-
-- For screenshot action: [SystemUI: Allow privileged system apps to access screenshot service](https://github.com/ProtonAOSP/android_frameworks_base/commit/013c590411435569077228aacf1e246678c366ab)
-- For assistant action: [core: Expose method to start assistant through Binder](https://github.com/ProtonAOSP/android_frameworks_base/commit/2b950e103e865aa6a1fe8a917964e0069d4c4037)
-- For toggle recents action: [core: Expose method to toggle recent apps through Binder](https://github.com/TheParasiteProject/frameworks_base/commit/903aa739452e47b765434cc77a89b6e7f49f972b)
+The gesture actions are the key actions of lineage-sdk, the same ones offered for hardware keys and navigation gestures. The chosen action is stored in `LineageSettings.System.KEY_QUICK_TAP_ACTION` (with `key_quick_tap_action_launch_app` and `key_quick_tap_action_launch_shortcut` for the "Open app" action), and each detected gesture sends the protected `lineageos.intent.action.QUICK_TAP` broadcast, on which PhoneWindowManager performs that action. This requires a lineage-sdk and frameworks/base with Quick Tap support.
 
 Default settings can be changed by overlaying [res/values/config.xml](https://github.com/TheParasiteProject/packages_apps_ColumbusService/blob/main/res/values/config.xml).
 

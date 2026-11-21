@@ -11,7 +11,6 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Handler
-import org.protonaosp.columbus.actions.*
 
 class APSensor(val context: Context, var sensitivity: Float, val handler: Handler) :
     ColumbusSensor() {

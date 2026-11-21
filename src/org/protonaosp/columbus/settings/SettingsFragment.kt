@@ -12,8 +12,11 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.LauncherApps
+import android.database.ContentObserver
 import android.media.AudioAttributes
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.UserHandle
 import android.os.VibrationEffect
 import android.os.VibratorManager
@@ -29,18 +32,22 @@ import com.android.settingslib.widget.SliderPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import lineageos.providers.LineageSettings
+import org.lineageos.internal.util.DeviceKeysConstants.Action
 import org.protonaosp.columbus.LAUNCH_ACTION_SUMMARY
 import org.protonaosp.columbus.PREFS_NAME
+import org.protonaosp.columbus.QUICK_TAP_ACTIONS
 import org.protonaosp.columbus.R
 import org.protonaosp.columbus.TAG
 import org.protonaosp.columbus.dlog
-import org.protonaosp.columbus.getAction
 import org.protonaosp.columbus.getAllowScreenOff
 import org.protonaosp.columbus.getDePrefs
 import org.protonaosp.columbus.getEnabled
 import org.protonaosp.columbus.getHapticIntensity
+import org.protonaosp.columbus.getQuickTapAction
+import org.protonaosp.columbus.getQuickTapLaunchApp
 import org.protonaosp.columbus.getSensitivity
-import org.protonaosp.columbus.setAction
+import org.protonaosp.columbus.setQuickTapAction
 import org.protonaosp.columbus.settings.launch.LaunchSettingsFragment
 import org.protonaosp.columbus.utils.AppIconCacheManager
 import org.protonaosp.columbus.widget.RadioButtonPreference
@@ -64,7 +71,16 @@ class SettingsFragment :
 
     // Keys
     private val keyEnabled by lazy { _context.getString(R.string.pref_key_enabled) }
-    private val keyAction by lazy { _context.getString(R.string.pref_key_action) }
+    private val keyActionForced by lazy {
+        _context.getString(R.string.pref_key_allow_screen_off_action_forced)
+    }
+    private val launchAppKey = Action.LAUNCH_APP.ordinal.toString()
+    private val actionObserver =
+        object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                updateActionState()
+            }
+        }
     private val keySensitivity by lazy { _context.getString(R.string.pref_key_sensitivity) }
     private val keyAllowScreenOff by lazy { _context.getString(R.string.pref_key_allow_screen_off) }
     private val keyHapticIntensity by lazy {
@@ -97,6 +113,12 @@ class SettingsFragment :
 
         prefs = _context.getDePrefs()
         prefs?.registerOnSharedPreferenceChangeListener(this)
+        _context.contentResolver.registerContentObserver(
+            LineageSettings.System.getUriFor(LineageSettings.System.KEY_QUICK_TAP_ACTION),
+            false,
+            actionObserver,
+            UserHandle.USER_ALL,
+        )
         actionCategory =
             preferenceScreen.findPreference<PreferenceCategory>(
                 getString(R.string.categ_key_action)
@@ -117,6 +139,7 @@ class SettingsFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         prefs?.unregisterOnSharedPreferenceChangeListener(this)
+        _context.contentResolver.unregisterContentObserver(actionObserver)
     }
 
     override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String?) {
@@ -125,7 +148,7 @@ class SettingsFragment :
                 updateEnabled()
                 updateActionState()
             }
-            keyAction -> updateActionState()
+            keyActionForced -> updateAllowScreenOff()
             keySensitivity -> updateSensitivity()
             keyAllowScreenOff -> updateAllowScreenOff()
             keyHapticIntensity -> updateHapticIntensity()
@@ -136,12 +159,18 @@ class SettingsFragment :
         if (emiter !is RadioButtonPreference) return
         val prefs = prefs ?: return
 
-        val key = emiter.key
-        if (key == prefs.getAction(_context)) {
+        val action = emiter.key.toIntOrNull()?.let { Action.fromIntSafe(it) } ?: return
+        if (action == _context.getQuickTapAction()) {
             return
         }
 
-        prefs.setAction(_context, key)
+        if (action == Action.LAUNCH_APP && _context.getQuickTapLaunchApp() == null) {
+            // Pick an app first, the picker then sets the action.
+            openLaunchSettings()
+            return
+        }
+
+        _context.setQuickTapAction(action)
 
         updateActionState()
     }
@@ -156,7 +185,7 @@ class SettingsFragment :
         }
 
         val enabled = prefs.getEnabled(_context)
-        var currentAction = prefs.getAction(_context)
+        val currentAction = _context.getQuickTapAction().ordinal.toString()
         for (i in 0 until preferenceCount) {
             val pref = actionCategory.getPreference(i)
             if (pref !is RadioButtonPreference) {
@@ -165,7 +194,7 @@ class SettingsFragment :
 
             pref.setEnabled(enabled)
             pref.setChecked(currentAction == pref.key)
-            if (pref.key == _context.getString(R.string.action_launch_value)) {
+            if (pref.key == launchAppKey) {
                 lifecycleScope.launch {
                     val summary =
                         withContext(Dispatchers.IO) { LAUNCH_ACTION_SUMMARY.getSummary(_context) }
@@ -207,15 +236,11 @@ class SettingsFragment :
 
         val prefInfoList =
             withContext(Dispatchers.IO) {
-                val actionNames = _context.resources.getStringArray(R.array.action_names)
-                val actionValues = _context.resources.getStringArray(R.array.action_values)
-                val launchAction = _context.getString(R.string.action_launch_value)
-
-                actionValues.mapIndexed { i, action ->
-                    val isLaunch = action == launchAction
+                QUICK_TAP_ACTIONS.map { (action, name) ->
+                    val isLaunch = action == Action.LAUNCH_APP
                     ActionPreferenceInfo(
-                        key = action,
-                        title = actionNames[i],
+                        key = action.ordinal.toString(),
+                        title = _context.getString(name),
                         summary =
                             if (isLaunch) LAUNCH_ACTION_SUMMARY.getSummary(_context) else null,
                         isLaunch = isLaunch,
@@ -259,19 +284,7 @@ class SettingsFragment :
                         if (!info.isLaunch) {
                             null
                         } else {
-                            View.OnClickListener {
-                                requireActivity()
-                                    .supportFragmentManager
-                                    .beginTransaction()
-                                    .setReorderingAllowed(true)
-                                    .replace(
-                                        com.android.settingslib.collapsingtoolbar.R.id
-                                            .content_frame,
-                                        LaunchSettingsFragment(),
-                                    )
-                                    .addToBackStack(null)
-                                    .commit()
-                            }
+                            View.OnClickListener { openLaunchSettings() }
                         }
                     setExtraWidgetOnClickListener(onClickListener)
                 }
@@ -286,6 +299,19 @@ class SettingsFragment :
 
             updateActionState()
         }
+    }
+
+    private fun openLaunchSettings() {
+        requireActivity()
+            .supportFragmentManager
+            .beginTransaction()
+            .setReorderingAllowed(true)
+            .replace(
+                com.android.settingslib.collapsingtoolbar.R.id.content_frame,
+                LaunchSettingsFragment(),
+            )
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun updateEnabled() {

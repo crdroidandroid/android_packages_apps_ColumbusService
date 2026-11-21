@@ -7,7 +7,6 @@ package org.protonaosp.columbus.sensors
 
 import java.util.ArrayDeque
 import java.util.ArrayList
-import org.protonaosp.columbus.actions.*
 
 open class EventIMURT(val _sizeWindowNs: Long, val sizeFeatureWindow: Int, val numberFeature: Int) {
     var featureVector: ArrayList<Float> = arrayListOf<Float>()

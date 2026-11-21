@@ -51,7 +51,6 @@
     <string name="action_notifications_name">Xem thông báo</string>
     <string name="action_camera_name">Mở ứng dụng Máy ảnh</string>
     <string name="action_power_menu_name">Mở trình đơn nguồn</string>
-    <string name="action_mute_name">Tắt chuông các cuộc gọi và thông báo</string>
     <string name="action_flashlight_name">Bật/Tắt đèn pin</string>
     <string name="action_screen_name">Bật/Tắt màn hình</string>
     <string name="action_launch_name">Mở ứng dụng</string>
