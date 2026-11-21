@@ -17,6 +17,8 @@
     @androidx.annotation.Keep *;
 }
 
--keep,allowoptimization,allowaccessmodification class com.android.systemui.** { *; }
 -keep,allowoptimization,allowaccessmodification class org.protonaosp.** { *; }
--keep,allowoptimization,allowaccessmodification class org.tensorflow.** { *; }
+
+-keepclasseswithmembernames,includedescriptorclasses class org.tensorflow.lite.** {
+    native <methods>;
+}

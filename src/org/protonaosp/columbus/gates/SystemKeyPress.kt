@@ -12,8 +12,6 @@ import android.view.Choreographer
 import android.view.InputEvent
 import android.view.InputEventReceiver
 import android.view.KeyEvent
-import com.android.systemui.shared.system.InputChannelCompat
-import com.android.systemui.shared.system.InputMonitorCompat
 import org.protonaosp.columbus.TAG
 
 class SystemKeyPress(context: Context, handler: Handler) : Gate(context, handler, 2) {
@@ -22,10 +20,10 @@ class SystemKeyPress(context: Context, handler: Handler) : Gate(context, handler
     private val blockingKeys =
         setOf(KeyEvent.KEYCODE_VOLUME_UP, KeyEvent.KEYCODE_VOLUME_DOWN, KeyEvent.KEYCODE_POWER)
 
-    private var inputEventReceiver: InputChannelCompat.InputEventReceiver? = null
-    private var inputMonitor: InputMonitorCompat? = null
+    private var inputEventReceiver: InputEventReceiver? = null
+    private var inputMonitor: GestureInputMonitor? = null
     private val inputEventListener =
-        object : InputChannelCompat.InputEventListener {
+        object : GestureInputMonitor.InputEventListener {
             override fun onInputEvent(ev: InputEvent) {
                 if (ev !is KeyEvent) {
                     return
@@ -58,7 +56,7 @@ class SystemKeyPress(context: Context, handler: Handler) : Gate(context, handler
 
     fun startListeningForKeyPress() {
         if (inputEventReceiver != null) return
-        inputMonitor = InputMonitorCompat(monitorName, 0)
+        inputMonitor = GestureInputMonitor(monitorName, 0)
         inputEventReceiver =
             inputMonitor!!.getInputReceiver(
                 Looper.getMainLooper(),

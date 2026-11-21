@@ -16,8 +16,6 @@ import android.view.Choreographer
 import android.view.InputEvent
 import android.view.InputEventReceiver
 import android.view.MotionEvent
-import com.android.systemui.shared.system.InputChannelCompat
-import com.android.systemui.shared.system.InputMonitorCompat
 import org.protonaosp.columbus.TAG
 
 class ScreenTouch(context: Context, val handler: Handler) : Gate(context, handler, 2) {
@@ -30,10 +28,10 @@ class ScreenTouch(context: Context, val handler: Handler) : Gate(context, handle
                 refreshStatus()
             }
         }
-    private var inputEventReceiver: InputChannelCompat.InputEventReceiver? = null
-    private var inputMonitor: InputMonitorCompat? = null
+    private var inputEventReceiver: InputEventReceiver? = null
+    private var inputMonitor: GestureInputMonitor? = null
     private val inputEventListener =
-        object : InputChannelCompat.InputEventListener {
+        object : GestureInputMonitor.InputEventListener {
             override fun onInputEvent(ev: InputEvent) {
                 if (ev !is MotionEvent) {
                     return
@@ -63,7 +61,7 @@ class ScreenTouch(context: Context, val handler: Handler) : Gate(context, handle
 
     fun startListeningForTouch() {
         if (inputEventReceiver != null) return
-        inputMonitor = InputMonitorCompat(monitorName, 0)
+        inputMonitor = GestureInputMonitor(monitorName, 0)
         inputEventReceiver =
             inputMonitor!!.getInputReceiver(
                 Looper.getMainLooper(),
