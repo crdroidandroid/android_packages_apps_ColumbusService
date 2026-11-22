@@ -38,7 +38,7 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     private var vibrator: Vibrator? = null
     private var prefs: SharedPreferences? = null
     private var action: Action = Action.NOTHING
-    private var vibDoubleTap: VibrationEffect? = null
+    private var hapticEffect = VibrationEffect.EFFECT_HEAVY_CLICK
     private var sensor: ColumbusSensor? = null
     private var controller: ColumbusController? = null
     private var handler: Handler? = null
@@ -227,13 +227,11 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
 
     private fun updateHapticIntensity() {
         val prefs = prefs ?: return
-        val value = prefs.getHapticIntensity(this)
-        vibDoubleTap =
-            when (value) {
-                0 -> EFFECT_TICK
-                1 -> EFFECT_DOUBLE_CLICK
-                2 -> EFFECT_HEAVY_CLICK
-                else -> EFFECT_HEAVY_CLICK
+        hapticEffect =
+            when (prefs.getHapticIntensity(this)) {
+                0 -> VibrationEffect.EFFECT_TICK
+                1 -> VibrationEffect.EFFECT_DOUBLE_CLICK
+                else -> VibrationEffect.EFFECT_HEAVY_CLICK
             }
     }
 
@@ -265,19 +263,20 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
         try {
             val settingsGate = settingsGate
             if (settingsGate != null && settingsGate.isBlocking() && settingsGate.handleGesture()) {
-                vibDoubleTap?.let { vibrator?.vibrate(it, sonicAudioAttr) }
+                // Feedback for the "Quick Tap detected" toast in the settings screen.
+                vibrator?.vibrate(VibrationEffect.createPredefined(hapticEffect), sonicAudioAttr)
                 return
             }
 
             if (action == Action.NOTHING) return
 
-            vibDoubleTap?.let { vibrator?.vibrate(it, sonicAudioAttr) }
-
-            // PhoneWindowManager performs the action set in KEY_QUICK_TAP_ACTION.
+            // PhoneWindowManager performs the action set in KEY_QUICK_TAP_ACTION and plays
+            // the haptic only if the action could run.
             sendBroadcastAsUser(
                 Intent(lineageos.content.Intent.ACTION_QUICK_TAP)
                     .setPackage(PACKAGE_ANDROID)
-                    .addFlags(Intent.FLAG_RECEIVER_FOREGROUND),
+                    .addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+                    .putExtra(lineageos.content.Intent.EXTRA_QUICK_TAP_HAPTIC_EFFECT, hapticEffect),
                 UserHandle.CURRENT,
             )
         } finally {
@@ -347,31 +346,10 @@ class ColumbusService : Service(), SharedPreferences.OnSharedPreferenceChangeLis
     companion object {
         private const val PACKAGE_ANDROID = "android"
 
-        // Vibration effects from HapticFeedbackConstants
-        // Duplicated because we can't use performHapticFeedback in a background service
         private val sonicAudioAttr: AudioAttributes =
             AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .build()
-
-        private val EFFECT_TICK =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK)
-            } else {
-                VibrationEffect.createOneShot(25, VibrationEffect.DEFAULT_AMPLITUDE)
-            }
-        private val EFFECT_DOUBLE_CLICK =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
-            } else {
-                VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE)
-            }
-        private val EFFECT_HEAVY_CLICK =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
-            } else {
-                VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE)
-            }
     }
 }
